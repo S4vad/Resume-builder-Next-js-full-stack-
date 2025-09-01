@@ -3,7 +3,7 @@ import React from "react";
 import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 
-const Navbar = () => {
+const Navbar = () => {f
   const { data: session, status } = useSession();
   return (
     <div className="w-full h-[65px] bg-slate-200 ">

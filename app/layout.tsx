@@ -1,5 +1,6 @@
 import "./globals.css";
 import AuthProvider from "../app/providers/Session-provider";
+import ReduxProvider from "@/components/ReduxProvider";
 
 export default function RootLayout({
   children,
@@ -10,7 +11,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AuthProvider>
-          {children}
+          <ReduxProvider>{children}</ReduxProvider>
         </AuthProvider>
       </body>
     </html>
