@@ -1,7 +1,7 @@
 import React from "react";
 import { cn } from "@/lib/utils"; //  helper for merging classes
 
-interface ButtonProps {
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
   className?: string;
 }

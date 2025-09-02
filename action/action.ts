@@ -1,6 +1,7 @@
 "use server";
-import { prisma } from "../../lib/prisma";
+import { prisma } from "../lib/prisma";
 import type { Resume } from "@prisma/client"; //types created prisma auto
+
 export async function getUserResume(
   userId: string
 ): Promise<{ success: boolean; data?: Resume[]; error?: string }> {
@@ -16,6 +17,7 @@ export async function getUserResume(
       },
       orderBy: { updatedAt: "desc" },
     });
+
     return { success: true, data: resumes };
   } catch (error) {
     console.error("Error fetching resumes:", error);
@@ -26,14 +28,15 @@ export async function getUserResume(
 export async function createTitle(userId: string, title: string) {
   try {
     const resume = await prisma.resume.create({
-      data: {
-        userId,
-        title,
-      },
+      data: { userId, title },
     });
-    return { success: true, data: resume };
+
+    return {
+      success: true,
+      data: resume,
+    };
   } catch (error) {
-    console.error("Error creating resume:", error);
+    console.error(error);
     return { success: false, error: "Failed to create resume" };
   }
 }

@@ -1,57 +1,29 @@
-export interface Experience {
-  id?: string
-  company: string
-  role: string
-  startDate: string
-  endDate: string
-  description: string
-}
+import type {
+  Resume as PrismaResume,
+  Experience as PrismaExperience,
+  Education as PrismaEducation,
+  Project as PrismaProject,
+  Certification as PrismaCertification,
+  Template as PrismaTemplate,
+} from "@prisma/client";
 
-export interface Education {
-  id?: string
-  degree: string
-  institute: string
-  startDate: string
-  endDate: string
-}
+// Use Prisma types directly for basic entities
+export type Experience = PrismaExperience;
+export type Education = PrismaEducation;
+export type Project = PrismaProject;
+export type Certification = PrismaCertification;
+export type Template = PrismaTemplate;
 
-export interface Project {
-  id?: string
-  title: string
-  description: string
-  github: string
-  live: string
-}
+// Extend Prisma Resume for frontend-specific needs
+export interface ResumeState
+  extends Omit<PrismaResume, "createdAt" | "updatedAt"> {
+  // Add relations manually
+  experience: Experience[];
+  education: Education[];
+  project: Project[];
+  certification: Certification[];
 
-export interface Certification {
-  id?: string
-  title: string
-  year: string
-  link: string
-}
-
-export interface ResumeState {
-  id?: string
-  userId?: string
-  templateId?: string
-  title: string
-  full_name: string
-  desigination: string
-  summary: string
-  address: string
-  email: string
-  phone: string
-  linkdin: string
-  github: string
-  portfolio: string
-  skills: string[]
-  languages: string[]
-  intrests: string[]
-  experience: Experience[]
-  education: Education[]
-  project: Project[]
-  certification: Certification[]
-  progression: number
-  isLoading: boolean
-  error: string | null
+  // Convert dates to strings for frontend
+  createdAt?: string;
+  updatedAt?: string;
 }

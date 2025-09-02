@@ -1,15 +1,15 @@
-import {configureStore} from "@reduxjs/toolkit"
-import resumeSlice from "./slices/resumeSlice";
+import { configureStore } from "@reduxjs/toolkit"
+import resumeSlice from "./slices/resumeSlice"
 import templateSlice from "./slices/templateSlice"
+import userSlice from "./slices/userSlice" 
 
-export const store=configureStore({
-  reducer:{
-    resume:resumeSlice,
-    template:templateSlice
+export const store = configureStore({
+  reducer: {
+    resume: resumeSlice,
+    template: templateSlice,
+    user: userSlice 
   }
-}
+}) 
 
-)
-
-export type RootState =ReturnType<typeof store.getState>
-export type AppDispatch=typeof store.dispatch;
+export type RootState = ReturnType<typeof store.getState>
+export type AppDispatch = typeof store.dispatch

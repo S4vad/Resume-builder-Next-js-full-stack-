@@ -3,13 +3,17 @@ import {
   Experience,
   Education,
   Certification,
+  Project,
 } from "@/types/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-const initialState: ResumeState = {
+export const initialState: ResumeState = {
+  id:"",
+  userId:"",
   title: "",
   full_name: "",
-  desigination: "",
+  designation: "",
+  templateId: "",
   summary: "",
   address: "",
   email: "",
@@ -25,8 +29,6 @@ const initialState: ResumeState = {
   project: [],
   certification: [],
   progression: 0,
-  isLoading: false,
-  error: null,
 };
 
 const resumeSlice = createSlice({
@@ -41,7 +43,7 @@ const resumeSlice = createSlice({
           Pick<
             ResumeState,
             | "full_name"
-            | "desigination"
+            | "designation"
             | "summary"
             | "address"
             | "email"
@@ -136,6 +138,25 @@ const resumeSlice = createSlice({
       }
     },
 
+    // Project actions
+    addProject: (state, action: PayloadAction<Project>) => {
+      state.project.push(action.payload);
+    },
+
+    updateProject: (
+      state,
+      action: PayloadAction<{ index: number; project: Project }>
+    ) => {
+      const { index, project } = action.payload;
+      if (state.project[index]) {
+        state.project[index] = project;
+      }
+    },
+
+    removeProject: (state, action: PayloadAction<number>) => {
+      state.project.splice(action.payload, 1);
+    },
+
     removeEducation: (state, action: PayloadAction<number>) => {
       state.education.splice(action.payload, 1);
     },
@@ -163,24 +184,15 @@ const resumeSlice = createSlice({
       state.progression = Math.max(0, Math.min(100, action.payload));
     },
 
-    incrementProgression: (state, action: PayloadAction<number>) => {
-      state.progression = Math.min(100, state.progression + action.payload);
+    incrementProgress: (state, action: PayloadAction<number>) => {
+      state.progression = Math.min(100, state.progression! + action.payload);
     },
 
     setTemplateId: (state, action: PayloadAction<string>) => {
       state.templateId = action.payload;
     },
 
-
-    setLoading: (state, action: PayloadAction<boolean>) => {
-      state.isLoading = action.payload;
-    },
-
-    setError: (state, action: PayloadAction<string | null>) => {
-      state.error = action.payload;
-    },
-
-
+    // Load complete resume data
     loadResume: (state, action: PayloadAction<Partial<ResumeState>>) => {
       return { ...state, ...action.payload };
     },
@@ -188,12 +200,17 @@ const resumeSlice = createSlice({
     // Reset resume
     resetResume: () => initialState,
 
+    // Clear specific sections
     clearExperience: (state) => {
       state.experience = [];
     },
 
     clearEducation: (state) => {
       state.education = [];
+    },
+
+    clearProjects: (state) => {
+      state.project = [];
     },
 
     clearCertifications: (state) => {
@@ -220,19 +237,20 @@ export const {
   addEducation,
   updateEducation,
   removeEducation,
+  addProject,
+  updateProject,
+  removeProject,
   addCertification,
   updateCertification,
   removeCertification,
   updateProgression,
-  incrementProgression,
+  incrementProgress,
   setTemplateId,
-  setLoading,
-  setError,
   loadResume,
   resetResume,
   clearExperience,
   clearEducation,
-
+  clearProjects,
   clearCertifications,
 } = resumeSlice.actions;
 
