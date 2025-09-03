@@ -2,10 +2,9 @@
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 import { useAppDispatch } from "@/store/hooks";
-import { setUser, clearUser } from "@/store/slices/userSlice";
+import { setUser, clearUser, setLoading } from "@/store/slices/userSlice";
 import { setResumes } from "@/store/slices/userSlice";
 import { getUserResume } from "@/action/action";
-import { ResumeState } from "@/types/types";
 import mapPrismaResumeToState from "@/lib/map";
 
 export default function SessionSync() {
@@ -14,6 +13,7 @@ export default function SessionSync() {
 
   useEffect(() => {
     if (status === "loading") return;
+    dispatch(setLoading(true));
 
     if (session?.user) {
       dispatch(
@@ -27,12 +27,12 @@ export default function SessionSync() {
 
       const fetchUserResumes = async (userId: string) => {
         const response = await getUserResume(userId);
-        console.log("respo session", response.data);
         if (response.success) {
           const mapped = response.data!.map((resume: any) =>
             mapPrismaResumeToState(resume)
           );
           dispatch(setResumes(mapped));
+          dispatch(setLoading(false));
         }
       };
       fetchUserResumes(session.user.id!);

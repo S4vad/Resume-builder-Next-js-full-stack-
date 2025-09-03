@@ -1,6 +1,6 @@
 import React from 'react'
 
-const CreateResume = () => {
+const ResumePreview = () => {
   return (
     <div>
       
@@ -8,4 +8,4 @@ const CreateResume = () => {
   )
 }
 
-export default CreateResume
+export default ResumePreview

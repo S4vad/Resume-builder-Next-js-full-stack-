@@ -2,6 +2,7 @@ import "./globals.css";
 import AuthProvider from "../app/providers/Session-provider";
 import ReduxProvider from "@/components/ReduxProvider";
 import SessionSync from "@/components/SessionSync";
+import Navbar from "@/components/Nav";
 
 export default function RootLayout({
   children,
@@ -14,6 +15,7 @@ export default function RootLayout({
         <AuthProvider>
           <ReduxProvider>
             <SessionSync />
+            <Navbar/>
             {children}
           </ReduxProvider>
         </AuthProvider>

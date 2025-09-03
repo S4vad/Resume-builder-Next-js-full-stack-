@@ -1,6 +1,6 @@
 "use client";
 import Button from "@/components/Button";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { RiFileUploadLine } from "react-icons/ri";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useRouter } from "next/navigation";
@@ -8,6 +8,7 @@ import Modal from "@/components/Modal";
 import { createTitle } from "../action/action";
 import { addResume } from "@/store/slices/userSlice";
 import mapPrismaResumeToState from "@/lib/map";
+import { ClipLoader } from "react-spinners";
 
 const Dashboard = () => {
   const [open, setOpen] = useState<boolean>(false);
@@ -15,11 +16,17 @@ const Dashboard = () => {
 
   const dispatch = useAppDispatch();
   const router = useRouter();
+
   const { resumes, currentUser, isLoading } = useAppSelector(
     (state) => state.user
   );
+
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center  w-full mt-50">
+        <ClipLoader  color="#6a39c9" size="45px" />
+      </div>
+    );
   }
   return (
     <div className="">
@@ -32,11 +39,14 @@ const Dashboard = () => {
             <p>Create your First Resume</p>
           )}
         </div>
-        <Button className="hover:scale-105  active:scale-95   transform transition-transform duration-200 ease-in-out">
+        <Button
+          onClick={() => setOpen(true)}
+          className="hover:scale-105  active:scale-95   transform transition-transform duration-200 ease-in-out"
+        >
           Create New <RiFileUploadLine />
         </Button>
       </div>
-      {resumes?.length > 0 ? (
+      {!isLoading &&resumes?.length > 0 ? (
         <div>show you resume</div>
       ) : (
         <div className="flex items-center flex-col gap-3   text-violet-800   mt-20  ">
@@ -70,6 +80,7 @@ const Dashboard = () => {
             if (res.success) {
               dispatch(addResume(mapPrismaResumeToState(res.data)));
               setOpen(false);
+              router.push(`/resume/${res.data!.id}`);
             }
           }}
           className="space-y-4 bg-white p-8 rounded-xl "

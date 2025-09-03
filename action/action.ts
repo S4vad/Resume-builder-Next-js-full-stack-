@@ -37,6 +37,22 @@ export async function createTitle(userId: string, title: string) {
     };
   } catch (error) {
     console.error(error);
-    return { success: false, error: "Failed to create resume" };
+    return { success: false, error: "Failed to create resume title" };
+  }
+}
+
+export async function updateResumeTitle(resumeId: string, title: string) {
+  try {
+    const resume = await prisma.resume.update({
+      where: { id: resumeId },
+      data: { title },
+    });
+    return {
+      success: true,
+      data: resume,
+    };
+  } catch (error) {
+    console.error(error);
+    return { success: false, error: "Failed to update resume title" };
   }
 }
