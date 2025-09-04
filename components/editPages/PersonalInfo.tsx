@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { ChevronLeft, Save, ChevronRight } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { loadResume } from "@/store/slices/resumeSlice";
-import { ResumeState } from "@/types/types";
 import { useRouter } from "next/navigation";
 
 interface PersonalInfoData {
@@ -21,22 +20,27 @@ interface Props {
 const PersonalInformationForm = ({ next, previous, id }: Props) => {
   const dispatch = useAppDispatch();
   const resume = useAppSelector((state) => state.resume);
-  const router=useRouter();
+  const router = useRouter();
   useEffect(() => {
     const fetchResume = async () => {
       const response = await fetch(`/api/resume/${id}`);
+      if (!response.ok) {
+        return;
+      }
       const data = await response.json();
       if (data.success) {
         dispatch(loadResume(data.data));
       }
     };
-    fetchResume();
+    if (id) {
+      fetchResume();
+    }
   }, [id, dispatch]);
 
   const [formData, setFormData] = useState<PersonalInfoData>({
-    fullName:resume.full_name || "",
-    designation:resume.designation || "",
-    summary: resume.summary || ""
+    fullName: resume.full_name || "",
+    designation: resume.designation || "",
+    summary: resume.summary || "",
   });
 
   const handleInputChange = (field: keyof PersonalInfoData, value: string) => {
@@ -128,7 +132,7 @@ const PersonalInformationForm = ({ next, previous, id }: Props) => {
       {/* Action Buttons */}
       <div className="flex items-center justify-between pt-6 border-t border-gray-200">
         <button
-          onClick={()=>router.push("/dashboard")}
+          onClick={() => router.push("/dashboard")}
           className="flex items-center gap-2 px-6 py-3 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors font-medium"
         >
           <ChevronLeft size={18} />

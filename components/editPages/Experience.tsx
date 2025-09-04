@@ -13,8 +13,9 @@ interface WorkExperience {
 interface Props {
   next: () => void;
   previous: () => void;
+  id:string
 }
-const WorkExperienceForm = ({ next, previous }: Props) => {
+const WorkExperienceForm = ({ next, previous ,id}: Props) => {
   const [experiences, setExperiences] = useState<WorkExperience[]>([
     {
       id: "1",

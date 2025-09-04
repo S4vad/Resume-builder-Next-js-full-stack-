@@ -12,8 +12,9 @@ interface Education {
 interface Props {
   next: () => void;
   previous: () => void;
+  id:string
 }
-const EducationForm = ({next,previous}:Props) => {
+const EducationForm = ({next,previous,id}:Props) => {
   const [educations, setEducations] = useState<Education[]>([
     {
       id: '1',

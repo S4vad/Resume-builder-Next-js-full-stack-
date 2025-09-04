@@ -9,8 +9,9 @@ interface Skill {
 interface Props {
   next: () => void;
   previous: () => void;
+  id:string
 }
-const SkillsForm = ({ next, previous }: Props) => {
+const SkillsForm = ({ next, previous ,id}: Props) => {
   const [skills, setSkills] = useState<Skill[]>([
     {
       id: "1",

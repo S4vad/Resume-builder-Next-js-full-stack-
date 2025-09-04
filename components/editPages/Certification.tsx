@@ -12,8 +12,9 @@ interface Certification {
 interface Props {
   next: () => void;
   previous: () => void;
+  id:string
 }
-const CertificationsForm = ({next,previous}:Props) => {
+const CertificationsForm = ({next,previous,id}:Props) => {
   const [certifications, setCertifications] = useState<Certification[]>([
     {
       id: '1',
