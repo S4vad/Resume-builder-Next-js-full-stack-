@@ -9,7 +9,6 @@ import defaultImage from "../public/defaultImage.png";
 
 const Navbar = () => {
   const { data: session, status } = useSession();
-  console.log(session,"this is session")
   return (
     <div className="  mx-auto h-[80px] bg-gradient-to-r from-white to-slate-50 flex  items-center justify-between p-8 shadow-xs  ">
       <div>

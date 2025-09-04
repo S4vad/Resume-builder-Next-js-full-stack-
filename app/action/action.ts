@@ -1,6 +1,8 @@
 "use server";
 import { prisma } from "../../lib/prisma";
 import type { Resume } from "@prisma/client"; //types created prisma auto
+import mapPrismaResumeToState from "@/lib/map";
+
 export async function getUserResume(
   userId: string
 ): Promise<{ success: boolean; data?: Resume[]; error?: string }> {
@@ -31,9 +33,35 @@ export async function createTitle(userId: string, title: string) {
         title,
       },
     });
-    return { success: true, data: resume };
+    const serialized = mapPrismaResumeToState(resume);
+
+    return { success: true, data: serialized };
   } catch (error) {
     console.error("Error creating resume:", error);
     return { success: false, error: "Failed to create resume" };
+  }
+}
+
+export async function deleteResume(resumeId: string, userId: string) {
+  try {
+    await prisma.resume.delete({
+      where: { id: resumeId },
+    });
+
+    const resumes = await prisma.resume.findMany({
+      where: { userId },
+    });
+
+    // map before returning
+    const serialized = resumes.map(mapPrismaResumeToState);
+
+    return {
+      success: true,
+      message: "Resume deleted successfully!",
+      data: serialized,
+    };
+  } catch (error) {
+    console.error("Error deleting resume:", error);
+    return { success: false, error: "Failed to delete resume" };
   }
 }

@@ -3,6 +3,7 @@ import AuthProvider from "../app/providers/Session-provider";
 import ReduxProvider from "@/components/ReduxProvider";
 import SessionSync from "@/components/SessionSync";
 import Navbar from "@/components/Nav";
+import { Toaster } from "react-hot-toast";
 
 export default function RootLayout({
   children,
@@ -15,7 +16,8 @@ export default function RootLayout({
         <AuthProvider>
           <ReduxProvider>
             <SessionSync />
-            <Navbar/>
+            <Toaster position="top-center" reverseOrder={true} />
+            <Navbar />
             {children}
           </ReduxProvider>
         </AuthProvider>

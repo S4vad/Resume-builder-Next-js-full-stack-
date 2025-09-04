@@ -29,7 +29,7 @@ const ResumeHeader = ({ id }: { id: string }) => {
         e.preventDefault();
         await updateResumeTitle(id,input)
       }}>
-        {edit ? (
+        {edit && (input.length>0) ? (
           <input
             type="text"
             value={input}

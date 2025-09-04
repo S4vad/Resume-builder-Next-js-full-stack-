@@ -5,10 +5,12 @@ import { RiFileUploadLine } from "react-icons/ri";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useRouter } from "next/navigation";
 import Modal from "@/components/Modal";
-import { createTitle } from "../action/action";
-import { addResume } from "@/store/slices/userSlice";
+import { createTitle, deleteResume } from "../action/action";
+import { addResume, setResumes } from "@/store/slices/userSlice";
 import mapPrismaResumeToState from "@/lib/map";
 import { ClipLoader } from "react-spinners";
+import { ResumeSummaryCard } from "@/components/Card";
+import toast from "react-hot-toast";
 
 const Dashboard = () => {
   const [open, setOpen] = useState<boolean>(false);
@@ -20,11 +22,25 @@ const Dashboard = () => {
   const { resumes, currentUser, isLoading } = useAppSelector(
     (state) => state.user
   );
+  const Mappedresumes = resumes.map(mapPrismaResumeToState);
+
+  const handleDeleteResume = async (id: string) => {
+    if (!currentUser) {
+      console.error("No user logged in, cannot delete resume");
+      return;
+    }
+    const response = await deleteResume(id, currentUser.id);
+
+    if (response.success) {
+      toast.success(response.message || "Resume deleted successfully");
+      dispatch(setResumes(response.data!));
+    }
+  };
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center  w-full mt-50">
-        <ClipLoader  color="#6a39c9" size="45px" />
+        <ClipLoader color="#6a39c9" size="45px" />
       </div>
     );
   }
@@ -46,8 +62,21 @@ const Dashboard = () => {
           Create New <RiFileUploadLine />
         </Button>
       </div>
-      {!isLoading &&resumes?.length > 0 ? (
-        <div>show you resume</div>
+      {!isLoading && resumes?.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-8">
+          {Mappedresumes.map((resume) => (
+          <div key={resume.id}  onClick={()=>router.push(`/resume/${resume.id}`)}>
+              <ResumeSummaryCard
+                title={resume.title}
+                createdAt={resume.createdAt || ""}
+                updatedAt={resume.updatedAt || ""}
+                completion={resume.progression ?? 0}
+                onSelect={() => console.log("seletect")}
+                onDelete={() => handleDeleteResume(resume.id)}
+              />
+            </div>
+          ))}
+        </div>
       ) : (
         <div className="flex items-center flex-col gap-3   text-violet-800   mt-20  ">
           <div className="rounded-full p-2 bg-fuchsia-50 border-1 border-violet-500">
@@ -77,6 +106,7 @@ const Dashboard = () => {
           onSubmit={async (e) => {
             e.preventDefault();
             const res = await createTitle(currentUser!.id, title);
+            console.log(res.data, "new");
             if (res.success) {
               dispatch(addResume(mapPrismaResumeToState(res.data)));
               setOpen(false);
