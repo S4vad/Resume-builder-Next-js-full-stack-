@@ -4,9 +4,10 @@ import { Plus, X, Star } from 'lucide-react';
 interface Props {
   next: () => void;
   previous: () => void;
+  id:string
 }
 
-const AdditionalInfoForm = ({next,previous}:Props) => {
+const AdditionalInfoForm = ({next,previous,id}:Props) => {
   const [languages, setLanguages] = useState([
     { language: '', proficiency: 0 }
   ]);

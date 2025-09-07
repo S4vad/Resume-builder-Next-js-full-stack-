@@ -123,6 +123,7 @@ model Experience {
   resumeId    String   @db.ObjectId
   company     String?
   role        String?
+  location    String?
   startDate   DateTime?
   endDate     DateTime?
   description String?
@@ -150,6 +151,9 @@ model Project {
   description String?
   github      String?
   live        String?
+  startDate   DateTime?
+  endDate     DateTime?
+  technologies  String[] @default([])
   createdAt   DateTime? @default(now())
   updatedAt   DateTime? @updatedAt
   resume      Resume   @relation(fields: [resumeId], references: [id], onDelete: Cascade)

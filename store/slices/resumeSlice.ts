@@ -8,8 +8,8 @@ import {
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export const initialState: ResumeState = {
-  id:"",
-  userId:"",
+  id: "",
+  userId: "",
   title: "",
   full_name: "",
   designation: "",
@@ -161,7 +161,6 @@ const resumeSlice = createSlice({
       state.education.splice(action.payload, 1);
     },
 
-   
     addCertification: (state, action: PayloadAction<Certification>) => {
       state.certification.push(action.payload);
     },

@@ -15,6 +15,7 @@ import toast from "react-hot-toast";
 const Dashboard = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [title, setTitle] = useState<string>("");
+  const [loading, setLoading] = useState(false);
 
   const dispatch = useAppDispatch();
   const router = useRouter();
@@ -37,7 +38,24 @@ const Dashboard = () => {
     }
   };
 
-  if (isLoading) {
+  const handleResumeCreated = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const res = await createTitle(currentUser!.id, title);
+      if (res.success) {
+        dispatch(addResume(mapPrismaResumeToState(res.data)));
+        setOpen(false);
+        router.push(`/resume/${res.data!.id}`);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (isLoading || loading) {
     return (
       <div className="flex items-center justify-center  w-full mt-50">
         <ClipLoader color="#6a39c9" size="45px" />
@@ -65,7 +83,10 @@ const Dashboard = () => {
       {!isLoading && resumes?.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-8">
           {Mappedresumes.map((resume) => (
-          <div key={resume.id}  onClick={()=>router.push(`/resume/${resume.id}`)}>
+            <div
+              key={resume.id}
+              onClick={() => router.push(`/resume/${resume.id}`)}
+            >
               <ResumeSummaryCard
                 title={resume.title}
                 createdAt={resume.createdAt || ""}
@@ -103,16 +124,7 @@ const Dashboard = () => {
         header="Create New Resume"
       >
         <form
-          onSubmit={async (e) => {
-            e.preventDefault();
-            const res = await createTitle(currentUser!.id, title);
-            console.log(res.data, "new");
-            if (res.success) {
-              dispatch(addResume(mapPrismaResumeToState(res.data)));
-              setOpen(false);
-              router.push(`/resume/${res.data!.id}`);
-            }
-          }}
+          onSubmit={(e) => handleResumeCreated(e)}
           className="space-y-4 bg-white p-8 rounded-xl "
         >
           <p className=" text-gray-500">

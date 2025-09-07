@@ -13,8 +13,9 @@ interface ContactInfoData {
 interface Props {
   next: () => void;
   previous: () => void;
+  id:string
 }
-const ContactInformationForm= ({next,previous}:Props) => {
+const ContactInformationForm= ({next,previous,id}:Props) => {
   const [formData, setFormData] = useState<ContactInfoData>({
     address: 'Short Address',
     email: 'john@example.com',

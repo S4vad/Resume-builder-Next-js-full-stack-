@@ -11,9 +11,10 @@ interface Project {
 interface Props {
   next: () => void;
   previous: () => void;
+  id:string
 }
 
-const ProjectsForm=({next,previous}:Props) => {
+const ProjectsForm=({next,previous,id}:Props) => {
   const [projects, setProjects] = useState<Project[]>([
     {
       id: '1',

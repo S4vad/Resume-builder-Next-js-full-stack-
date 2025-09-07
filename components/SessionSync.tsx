@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useAppDispatch } from "@/store/hooks";
 import { setUser, clearUser, setLoading } from "@/store/slices/userSlice";
 import { setResumes } from "@/store/slices/userSlice";
-import { getUserResume } from "@/action/action";
+import { getUserResume } from "../app/action/action";
 import mapPrismaResumeToState from "@/lib/map";
 
 export default function SessionSync() {

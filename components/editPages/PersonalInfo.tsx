@@ -2,8 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { ChevronLeft, Save, ChevronRight } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { loadResume } from "@/store/slices/resumeSlice";
-import { ResumeState } from "@/types/types";
+import { loadResume, updateBasicInfo } from "@/store/slices/resumeSlice";
 import { useRouter } from "next/navigation";
 
 interface PersonalInfoData {
@@ -21,29 +20,57 @@ interface Props {
 const PersonalInformationForm = ({ next, previous, id }: Props) => {
   const dispatch = useAppDispatch();
   const resume = useAppSelector((state) => state.resume);
-  const router=useRouter();
+  const router = useRouter();
+  
   useEffect(() => {
     const fetchResume = async () => {
       const response = await fetch(`/api/resume/${id}`);
+      if (!response.ok) {
+        return;
+      }
       const data = await response.json();
       if (data.success) {
         dispatch(loadResume(data.data));
       }
     };
-    fetchResume();
+    if (id) {
+      fetchResume();
+    }
   }, [id, dispatch]);
 
   const [formData, setFormData] = useState<PersonalInfoData>({
-    fullName:resume.full_name || "",
-    designation:resume.designation || "",
-    summary: resume.summary || ""
+    fullName: resume.full_name || "",
+    designation: resume.designation || "",
+    summary: resume.summary || "",
   });
 
+  // Update local state when resume data changes from Redux
+  useEffect(() => {
+    setFormData({
+      fullName: resume.full_name || "",
+      designation: resume.designation || "",
+      summary: resume.summary || "",
+    });
+  }, [resume.full_name, resume.designation, resume.summary]);
+
   const handleInputChange = (field: keyof PersonalInfoData, value: string) => {
+    // Update local state
     setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
+
+    // Immediately dispatch to Redux for live template updates
+    const updatePayload: any = {};
+    if (field === 'fullName') {
+      updatePayload.full_name = value;
+    } else if (field === 'designation') {
+      updatePayload.designation = value;
+    } else if (field === 'summary') {
+      updatePayload.summary = value;
+    }
+    
+    dispatch(updateBasicInfo(updatePayload));
   };
 
   const handleBack = async () => {
@@ -51,15 +78,54 @@ const PersonalInformationForm = ({ next, previous, id }: Props) => {
   };
 
   const handleNext = async () => {
-    await next();
+    // Optional: Save to backend before proceeding
+    try {
+      const response = await fetch(`/api/resume/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          full_name: formData.fullName,
+          designation: formData.designation,
+          summary: formData.summary,
+        }),
+      });
+      
+      if (response.ok) {
+        await next();
+      }
+    } catch (error) {
+      console.error('Error saving resume:', error);
+      // Still proceed to next step even if save fails
+      await next();
+    }
   };
 
-  const handleSaveAndExit = () => {
-    console.log("Save & Exit clicked", formData);
+  const handleSaveAndExit = async () => {
+    try {
+      const response = await fetch(`/api/resume/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          full_name: formData.fullName,
+          designation: formData.designation,
+          summary: formData.summary,
+        }),
+      });
+      
+      if (response.ok) {
+        router.push("/dashboard");
+      }
+    } catch (error) {
+      console.error('Error saving resume:', error);
+    }
   };
 
   return (
-    <div className="max-w-4xl  bg-white p-8 rounded-lg shadow-md">
+    <div className="max-w-4xl bg-white p-8 rounded-lg shadow-md">
       <div className="mb-8">
         <h2 className="text-2xl font-semibold text-gray-800 mb-6">
           Personal Information
@@ -128,7 +194,7 @@ const PersonalInformationForm = ({ next, previous, id }: Props) => {
       {/* Action Buttons */}
       <div className="flex items-center justify-between pt-6 border-t border-gray-200">
         <button
-          onClick={()=>router.push("/dashboard")}
+          onClick={() => router.push("/dashboard")}
           className="flex items-center gap-2 px-6 py-3 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors font-medium"
         >
           <ChevronLeft size={18} />
