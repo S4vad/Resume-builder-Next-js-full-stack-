@@ -2,8 +2,9 @@
 import React, { useEffect, useState } from "react";
 import { ChevronLeft, Save, ChevronRight } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { loadResume, updateBasicInfo } from "@/store/slices/resumeSlice";
+import { updateBasicInfo } from "@/store/slices/resumeSlice";
 import { useRouter } from "next/navigation";
+import { updatePersonalInfo } from "@/app/action/formAction";
 
 interface PersonalInfoData {
   fullName: string;
@@ -17,34 +18,17 @@ interface Props {
   id: string;
 }
 
-const PersonalInformationForm = ({ next, previous, id }: Props) => {
+const PersonalInformationForm = ({ next, id }: Props) => {
   const dispatch = useAppDispatch();
   const resume = useAppSelector((state) => state.resume);
   const router = useRouter();
-  
-  useEffect(() => {
-    const fetchResume = async () => {
-      const response = await fetch(`/api/resume/${id}`);
-      if (!response.ok) {
-        return;
-      }
-      const data = await response.json();
-      if (data.success) {
-        dispatch(loadResume(data.data));
-      }
-    };
-    if (id) {
-      fetchResume();
-    }
-  }, [id, dispatch]);
 
   const [formData, setFormData] = useState<PersonalInfoData>({
-    fullName: resume.full_name || "",
-    designation: resume.designation || "",
-    summary: resume.summary || "",
+    fullName: "",
+    designation: "",
+    summary: "",
   });
 
-  // Update local state when resume data changes from Redux
   useEffect(() => {
     setFormData({
       fullName: resume.full_name || "",
@@ -54,73 +38,39 @@ const PersonalInformationForm = ({ next, previous, id }: Props) => {
   }, [resume.full_name, resume.designation, resume.summary]);
 
   const handleInputChange = (field: keyof PersonalInfoData, value: string) => {
-    // Update local state
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
 
-    // Immediately dispatch to Redux for live template updates
-    const updatePayload: any = {};
-    if (field === 'fullName') {
-      updatePayload.full_name = value;
-    } else if (field === 'designation') {
-      updatePayload.designation = value;
-    } else if (field === 'summary') {
-      updatePayload.summary = value;
-    }
-    
-    dispatch(updateBasicInfo(updatePayload));
-  };
-
-  const handleBack = async () => {
-    await previous();
+    dispatch(
+      updateBasicInfo(
+        field === "fullName"
+          ? { full_name: value }
+          : field === "designation"
+          ? { designation: value }
+          : { summary: value }
+      )
+    );
   };
 
   const handleNext = async () => {
-    // Optional: Save to backend before proceeding
-    try {
-      const response = await fetch(`/api/resume/${id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          full_name: formData.fullName,
-          designation: formData.designation,
-          summary: formData.summary,
-        }),
-      });
-      
-      if (response.ok) {
-        await next();
-      }
-    } catch (error) {
-      console.error('Error saving resume:', error);
-      // Still proceed to next step even if save fails
-      await next();
-    }
+    await updatePersonalInfo(id, {
+      full_name: formData.fullName,
+      designation: formData.designation,
+      summary: formData.summary,
+    });
+    next();
   };
 
   const handleSaveAndExit = async () => {
-    try {
-      const response = await fetch(`/api/resume/${id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          full_name: formData.fullName,
-          designation: formData.designation,
-          summary: formData.summary,
-        }),
-      });
-      
-      if (response.ok) {
-        router.push("/dashboard");
-      }
-    } catch (error) {
-      console.error('Error saving resume:', error);
+    const res = await updatePersonalInfo(id, {
+      full_name: formData.fullName,
+      designation: formData.designation,
+      summary: formData.summary,
+    });
+
+    if (res.success) {
+      router.push("/dashboard");
+    } else {
+      console.error("Failed to save resume:", res.error);
     }
   };
 

@@ -53,12 +53,12 @@ const TemplateOne: React.FC<TemplateOneProps> = ({
     email: resumeData.email || "",
     phone: resumeData.phone || "",
     location: resumeData.address || "",
-    linkedin: resumeData.linkdin || "",
+    linkedin: resumeData.linkedin || "",
     github: resumeData.github || "",
     website: resumeData.portfolio || "",
   };
 
-  const education = (resumeData.education || []).map((edu) => ({
+  const education = (resumeData.educations || []).map((edu) => ({
     institution: edu.institute || "",
     degree: edu.degree || "",
     startDate: edu.startDate || "",
@@ -74,14 +74,14 @@ const TemplateOne: React.FC<TemplateOneProps> = ({
     description: exp.description || "",
   }));
 
-  const projects = (resumeData.project || []).map((proj) => ({
+  const projects = (resumeData.projects || []).map((proj) => ({
     title: proj.title || "",
     description: proj.description || "",
     github: proj.github || "",
     liveDemo: proj.live || "",
   }));
 
-  const certifications = (resumeData.certification || []).map((cert) => ({
+  const certifications = (resumeData.certifications || []).map((cert) => ({
     title: cert.title || "",
     year: cert.year || "",
   }));
@@ -247,8 +247,7 @@ const TemplateOne: React.FC<TemplateOneProps> = ({
                     description={proj.description}
                     githubLink={proj.github}
                     liveDemoUrl={proj.liveDemo}
-                    bgColor={DEFAULT_THEME[4]}
-                    headingClass="pb-2"
+                    
                   />
                 ))}
               </div>

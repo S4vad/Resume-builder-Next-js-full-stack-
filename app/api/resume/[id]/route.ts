@@ -6,7 +6,45 @@ export async function GET(
   req: Request,
   { params }: { params: { id: string } }
 ) {
-  const response = await prisma.resume.findUnique({ where: { id: params.id } });
-  const resume=mapPrismaResumeToState(response)
-  return NextResponse.json({success:true,data:resume});
+  try {
+    const response = await prisma.resume.findUnique({
+      where: { id: params.id },
+      include: {
+        experience: {
+          orderBy: { createdAt: "desc" },
+        },
+        educations: {
+          orderBy: { createdAt: "desc" },
+        },
+        projects: {
+          orderBy: { createdAt: "desc" },
+        },
+        certifications: {
+          orderBy: { createdAt: "desc" },
+        },
+      },
+    });
+
+    if (!response) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Resume not found",
+        },
+        { status: 404 }
+      );
+    }
+
+    const resume = mapPrismaResumeToState(response);
+    return NextResponse.json({ success: true, data: resume });
+  } catch (error) {
+    console.error("Error fetching resume:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Failed to fetch resume",
+      },
+      { status: 500 }
+    );
+  }
 }

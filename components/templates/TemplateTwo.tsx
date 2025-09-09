@@ -29,12 +29,12 @@ const TemplateTwo: React.FC<TemplateTwoProps> = ({
   const contactInfo = {
     phone: resumeData.phone || "",
     email: resumeData.email || "",
-    linkedin: resumeData.linkdin || "",
+    linkedin: resumeData.linkedin || "",
     github: resumeData.github || "",
     website: resumeData.portfolio || "",
   };
 
-  const education = (resumeData.education || []).map((edu) => ({
+  const education = (resumeData.educations || []).map((edu) => ({
     institution: edu.institute || "",
     degree: edu.degree || "",
     startDate: edu.startDate || "",
@@ -50,7 +50,7 @@ const TemplateTwo: React.FC<TemplateTwoProps> = ({
     description: exp.description || "",
   }));
 
-  const projects = (resumeData.project || []).map((proj) => ({
+  const projects = (resumeData.projects || []).map((proj) => ({
     title: proj.title || "",
     description: proj.description || "",
     startDate: proj.startDate || "",
@@ -62,7 +62,7 @@ const TemplateTwo: React.FC<TemplateTwoProps> = ({
     linkType: proj.live ? "Live Demo" : "GitHub",
   }));
 
-  const certifications = (resumeData.certification || []).map((cert) => ({
+  const certifications = (resumeData.certifications || []).map((cert) => ({
     title: cert.title || "",
     year: cert.year || "",
   }));
@@ -300,7 +300,7 @@ const TemplateTwo: React.FC<TemplateTwoProps> = ({
           <ul className="list-disc list-inside text-[11px] text-gray-700">
             {certifications.map((cert, idx) => (
               <li key={idx} className="leading-tight">
-                {cert.title} — ({cert.year})
+                {cert.title} — {formatYearMonth(cert.year)}
               </li>
             ))}
           </ul>

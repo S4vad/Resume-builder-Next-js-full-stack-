@@ -18,22 +18,22 @@ export const initialState: ResumeState = {
   address: "",
   email: "",
   phone: "",
-  linkdin: "",
+  linkedin: "",
   github: "",
   portfolio: "",
   skills: [],
   languages: [],
   intrests: [],
   experience: [],
-  education: [],
-  project: [],
-  certification: [],
+  educations: [],
+  projects: [],
+  certifications: [],
   progression: 0,
 };
 
 const resumeSlice = createSlice({
   name: "resume",
-  initialState,
+  initialState: { ...initialState, isLoading: false, error: "" },
   reducers: {
     // Basic info actions
     updateBasicInfo: (
@@ -48,7 +48,7 @@ const resumeSlice = createSlice({
             | "address"
             | "email"
             | "phone"
-            | "linkdin"
+            | "linkedin"
             | "github"
             | "portfolio"
           >
@@ -107,6 +107,10 @@ const resumeSlice = createSlice({
       state.intrests = action.payload;
     },
 
+    setExperiencesRedux: (state, action: PayloadAction<Experience[]>) => {
+      state.experience = action.payload;
+    },
+
     addExperience: (state, action: PayloadAction<Experience>) => {
       state.experience.push(action.payload);
     },
@@ -125,7 +129,11 @@ const resumeSlice = createSlice({
       state.experience.splice(action.payload, 1);
     },
     addEducation: (state, action: PayloadAction<Education>) => {
-      state.education.push(action.payload);
+      state.educations.push(action.payload);
+    },
+
+    setEducations: (state, action: PayloadAction<Education[]>) => {
+      state.educations = action.payload;
     },
 
     updateEducation: (
@@ -133,14 +141,17 @@ const resumeSlice = createSlice({
       action: PayloadAction<{ index: number; education: Education }>
     ) => {
       const { index, education } = action.payload;
-      if (state.education[index]) {
-        state.education[index] = education;
+      if (state.educations[index]) {
+        state.educations[index] = education;
       }
     },
 
     // Project actions
     addProject: (state, action: PayloadAction<Project>) => {
-      state.project.push(action.payload);
+      state.projects.push(action.payload);
+    },
+    setProjects: (state, action: PayloadAction<Project[]>) => {
+      state.projects = action.payload;
     },
 
     updateProject: (
@@ -148,21 +159,24 @@ const resumeSlice = createSlice({
       action: PayloadAction<{ index: number; project: Project }>
     ) => {
       const { index, project } = action.payload;
-      if (state.project[index]) {
-        state.project[index] = project;
+      if (state.projects[index]) {
+        state.projects[index] = project;
       }
     },
 
     removeProject: (state, action: PayloadAction<number>) => {
-      state.project.splice(action.payload, 1);
+      state.projects.splice(action.payload, 1);
     },
 
     removeEducation: (state, action: PayloadAction<number>) => {
-      state.education.splice(action.payload, 1);
+      state.educations.splice(action.payload, 1);
     },
 
     addCertification: (state, action: PayloadAction<Certification>) => {
-      state.certification.push(action.payload);
+      state.certifications.push(action.payload);
+    },
+    setCertifications: (state, action: PayloadAction<Certification[]>) => {
+      state.certifications = action.payload;
     },
 
     updateCertification: (
@@ -170,13 +184,13 @@ const resumeSlice = createSlice({
       action: PayloadAction<{ index: number; certification: Certification }>
     ) => {
       const { index, certification } = action.payload;
-      if (state.certification[index]) {
-        state.certification[index] = certification;
+      if (state.certifications[index]) {
+        state.certifications[index] = certification;
       }
     },
 
     removeCertification: (state, action: PayloadAction<number>) => {
-      state.certification.splice(action.payload, 1);
+      state.certifications.splice(action.payload, 1);
     },
 
     updateProgression: (state, action: PayloadAction<number>) => {
@@ -196,24 +210,28 @@ const resumeSlice = createSlice({
       return { ...state, ...action.payload };
     },
 
-    // Reset resume
-    resetResume: () => initialState,
-
     // Clear specific sections
     clearExperience: (state) => {
       state.experience = [];
     },
 
     clearEducation: (state) => {
-      state.education = [];
+      state.educations = [];
     },
 
     clearProjects: (state) => {
-      state.project = [];
+      state.projects = [];
     },
 
     clearCertifications: (state) => {
-      state.certification = [];
+      state.certifications = [];
+    },
+    setLoading: (state, action: PayloadAction<boolean>) => {
+      state.isLoading = action.payload;
+    },
+
+    setError: (state, action: PayloadAction<string | "">) => {
+      state.error = action.payload;
     },
   },
 });
@@ -229,6 +247,8 @@ export const {
   updateLanguages,
   addInterest,
   removeInterest,
+  setCertifications,
+  setProjects,
   updateInterests,
   addExperience,
   updateExperience,
@@ -236,6 +256,7 @@ export const {
   addEducation,
   updateEducation,
   removeEducation,
+  setEducations,
   addProject,
   updateProject,
   removeProject,
@@ -246,11 +267,13 @@ export const {
   incrementProgress,
   setTemplateId,
   loadResume,
-  resetResume,
+  setLoading,
+  setError,
   clearExperience,
   clearEducation,
   clearProjects,
   clearCertifications,
+  setExperiencesRedux,
 } = resumeSlice.actions;
 
 export default resumeSlice.reducer;

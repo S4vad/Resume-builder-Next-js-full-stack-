@@ -101,16 +101,16 @@ model Resume {
   address       String?
   email         String?
   phone         String?
-  linkdin       String?
+  linkedin       String?
   github        String?
   portfolio     String?
  skills     String[]   @default([])
  languages  String[]   @default([])
  intrests   String[]   @default([])
   experience    Experience[]
-  education     Education[]
-  project       Project[]
-  certification Certification[]
+  educations     Education[]
+  projects       Project[]
+  certifications Certification[]
   progression   Int? 
   createdAt     DateTime? @default(now())
   updatedAt     DateTime? @updatedAt
@@ -124,11 +124,11 @@ model Experience {
   company     String?
   role        String?
   location    String?
-  startDate   DateTime?
-  endDate     DateTime?
+  startDate   String?
+  endDate     String?
   description String?
-  createdAt   DateTime? @default(now())
-  updatedAt   DateTime? @updatedAt
+  createdAt   String?  @default("")
+  updatedAt   String?  @default("")
   resume      Resume   @relation(fields: [resumeId], references: [id], onDelete: Cascade)
 }
 
@@ -137,35 +137,35 @@ model Education {
   resumeId  String   @db.ObjectId
   degree    String?
   institute String?
-  startDate DateTime?
-  endDate   DateTime?
-  createdAt DateTime? @default(now())
-  updatedAt DateTime? @updatedAt
+  startDate String?
+  endDate   String?
+  createdAt String?  @default("")
+  updatedAt String?  @default("")
   resume    Resume   @relation(fields: [resumeId], references: [id], onDelete: Cascade)
 }
 
 model Project {
-  id          String   @id @db.ObjectId @default(auto()) @map("_id")
-  resumeId    String   @db.ObjectId
-  title       String?
-  description String?
-  github      String?
-  live        String?
-  startDate   DateTime?
-  endDate     DateTime?
+  id            String   @id @db.ObjectId @default(auto()) @map("_id")
+  resumeId      String   @db.ObjectId
+  title         String?
+  description   String?
+  github        String?
+  live          String?
+  startDate     String?
+  endDate       String?
   technologies  String[] @default([])
-  createdAt   DateTime? @default(now())
-  updatedAt   DateTime? @updatedAt
-  resume      Resume   @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  createdAt     String?  @default("")
+  updatedAt     String?  @default("")
+  resume        Resume   @relation(fields: [resumeId], references: [id], onDelete: Cascade)
 }
 
 model Certification {
   id        String   @id @db.ObjectId @default(auto()) @map("_id")
   resumeId  String   @db.ObjectId
   title     String?
-  year      DateTime?
+  year      String?
   link      String?
-  createdAt DateTime? @default(now())
-  updatedAt DateTime? @updatedAt
+  createdAt String?  @default("")
+  updatedAt String?  @default("")
   resume    Resume   @relation(fields: [resumeId], references: [id], onDelete: Cascade)
 }

@@ -1,70 +1,106 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { ChevronLeft, Save, ChevronRight, Plus, X } from "lucide-react";
-
-interface WorkExperience {
-  id: string;
-  company: string;
-  role: string;
-  startDate: string;
-  endDate: string;
-  description: string;
-}
+import { useAppSelector, useAppDispatch } from "@/store/hooks";
+import {
+  addExperience,
+  updateExperience,
+  removeExperience,
+} from "@/store/slices/resumeSlice";
+import { Experience } from "@/types/types";
+import { addExperiencesDb } from "@/app/action/formAction";
+import { useRouter } from "next/navigation";
 
 interface Props {
   next: () => void;
   previous: () => void;
-  id:string
+  id: string;
 }
-const WorkExperienceForm = ({ next, previous ,id}: Props) => {
-  const [experiences, setExperiences] = useState<WorkExperience[]>([
-    {
-      id: "1",
-      company: "ABC Corp",
-      role: "Frontend Developer",
-      startDate: "",
-      endDate: "",
-      description: "What did you do in this role?",
-    },
-  ]);
+
+const WorkExperienceForm = ({ next, previous, id }: Props) => {
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+  const { experience } = useAppSelector((state) => state.resume);
 
   const handleInputChange = (
-    id: string,
-    field: keyof Omit<WorkExperience, "id">,
+    index: number,
+    field: keyof Omit<Experience, "id" | "resumeId">,
     value: string
   ) => {
-    setExperiences((prev) =>
-      prev.map((exp) => (exp.id === id ? { ...exp, [field]: value } : exp))
-    );
+    const updatedExperience = {
+      ...experience[index],
+      [field]: value,
+    };
+    dispatch(updateExperience({ index, experience: updatedExperience }));
   };
 
   const addWorkExperience = () => {
-    const newExperience: WorkExperience = {
-      id: Date.now().toString(),
+    const newExperience: Experience = {
+      id: "",
+      resumeId: id,
       company: "",
       role: "",
+      location: "",
       startDate: "",
       endDate: "",
-      description: "What did you do in this role?",
+      description: "",
     };
-    setExperiences((prev) => [...prev, newExperience]);
+    dispatch(addExperience(newExperience));
   };
 
-  const removeWorkExperience = (id: string) => {
-    if (experiences.length > 1) {
-      setExperiences((prev) => prev.filter((exp) => exp.id !== id));
+  const removeWorkExperience = (index: number) => {
+    if (experience.length > 1) {
+      dispatch(removeExperience(index));
     }
   };
 
   const handleBack = async () => {
-    await previous();
+    previous();
   };
 
   const handleNext = async () => {
-    await next();
+    await saveExperiences();
+    next();
   };
 
-  const handleSaveAndExit = () => {
-    console.log("Save & Exit clicked", experiences);
+  const handleSaveAndExit = async () => {
+    await saveExperiences();
+    router.push("/dashboard");
+  };
+
+  const saveExperiences = async () => {
+    try {
+      // Prepare data - filter out empty experiences
+      const experienceData = experience
+        .filter(
+          (exp) =>
+            exp.company?.trim() || exp.role?.trim() || exp.description?.trim()
+        )
+        .map((exp) => ({
+          resumeId: id,
+          company: exp.company || null,
+          role: exp.role || null,
+          location: exp.location || null,
+          startDate: exp.startDate ? exp.startDate : null,
+          endDate: exp.endDate ? exp.endDate : null,
+          description: exp.description || null,
+        }));
+
+      await addExperiencesDb(id, experienceData);
+    } catch (error) {
+      console.error("Error saving experiences:", error);
+    }
+  };
+
+  // Helper function to format date for input
+  const formatDateForInput = (
+    dateString: string | null | undefined
+  ): string => {
+    if (!dateString) return "";
+    try {
+      return new Date(dateString).toISOString().split("T")[0];
+    } catch {
+      return "";
+    }
   };
 
   return (
@@ -75,14 +111,14 @@ const WorkExperienceForm = ({ next, previous ,id}: Props) => {
         </h2>
 
         <div className="space-y-8">
-          {experiences.map((experience, index) => (
+          {experience.map((exp, index) => (
             <div
-              key={experience.id}
+              key={exp.id || index}
               className="relative border border-gray-200 rounded-lg p-6 bg-gray-50"
             >
-              {experiences.length > 1 && (
+              {experience.length > 1 && (
                 <button
-                  onClick={() => removeWorkExperience(experience.id)}
+                  onClick={() => removeWorkExperience(index)}
                   className="absolute top-4 right-4 text-gray-400 hover:text-red-500 transition-colors"
                 >
                   <X size={20} />
@@ -94,21 +130,17 @@ const WorkExperienceForm = ({ next, previous ,id}: Props) => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label
-                      htmlFor={`company-${experience.id}`}
+                      htmlFor={`company-${index}`}
                       className="block text-sm font-medium text-gray-700 mb-2"
                     >
                       Company
                     </label>
                     <input
                       type="text"
-                      id={`company-${experience.id}`}
-                      value={experience.company}
+                      id={`company-${index}`}
+                      value={exp.company || ""}
                       onChange={(e) =>
-                        handleInputChange(
-                          experience.id,
-                          "company",
-                          e.target.value
-                        )
+                        handleInputChange(index, "company", e.target.value)
                       }
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors bg-white"
                       placeholder="Company name"
@@ -117,17 +149,17 @@ const WorkExperienceForm = ({ next, previous ,id}: Props) => {
 
                   <div>
                     <label
-                      htmlFor={`role-${experience.id}`}
+                      htmlFor={`role-${index}`}
                       className="block text-sm font-medium text-gray-700 mb-2"
                     >
                       Role
                     </label>
                     <input
                       type="text"
-                      id={`role-${experience.id}`}
-                      value={experience.role}
+                      id={`role-${index}`}
+                      value={exp.role || ""}
                       onChange={(e) =>
-                        handleInputChange(experience.id, "role", e.target.value)
+                        handleInputChange(index, "role", e.target.value)
                       }
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors bg-white"
                       placeholder="Your role/position"
@@ -135,25 +167,41 @@ const WorkExperienceForm = ({ next, previous ,id}: Props) => {
                   </div>
                 </div>
 
+                {/* Location Field */}
+                <div>
+                  <label
+                    htmlFor={`location-${index}`}
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
+                    Location
+                  </label>
+                  <input
+                    type="text"
+                    id={`location-${index}`}
+                    value={exp.location || ""}
+                    onChange={(e) =>
+                      handleInputChange(index, "location", e.target.value)
+                    }
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors bg-white"
+                    placeholder="City, Country"
+                  />
+                </div>
+
                 {/* Start Date and End Date Row */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label
-                      htmlFor={`startDate-${experience.id}`}
+                      htmlFor={`startDate-${index}`}
                       className="block text-sm font-medium text-gray-700 mb-2"
                     >
                       Start Date
                     </label>
                     <input
                       type="date"
-                      id={`startDate-${experience.id}`}
-                      value={experience.startDate}
+                      id={`startDate-${index}`}
+                      value={formatDateForInput(exp.startDate)}
                       onChange={(e) =>
-                        handleInputChange(
-                          experience.id,
-                          "startDate",
-                          e.target.value
-                        )
+                        handleInputChange(index, "startDate", e.target.value)
                       }
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors bg-white"
                     />
@@ -161,21 +209,17 @@ const WorkExperienceForm = ({ next, previous ,id}: Props) => {
 
                   <div>
                     <label
-                      htmlFor={`endDate-${experience.id}`}
+                      htmlFor={`endDate-${index}`}
                       className="block text-sm font-medium text-gray-700 mb-2"
                     >
                       End Date
                     </label>
                     <input
                       type="date"
-                      id={`endDate-${experience.id}`}
-                      value={experience.endDate}
+                      id={`endDate-${index}`}
+                      value={formatDateForInput(exp.endDate)}
                       onChange={(e) =>
-                        handleInputChange(
-                          experience.id,
-                          "endDate",
-                          e.target.value
-                        )
+                        handleInputChange(index, "endDate", e.target.value)
                       }
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors bg-white"
                     />
@@ -185,20 +229,16 @@ const WorkExperienceForm = ({ next, previous ,id}: Props) => {
                 {/* Description Field */}
                 <div>
                   <label
-                    htmlFor={`description-${experience.id}`}
+                    htmlFor={`description-${index}`}
                     className="block text-sm font-medium text-gray-700 mb-2"
                   >
                     Description
                   </label>
                   <textarea
-                    id={`description-${experience.id}`}
-                    value={experience.description}
+                    id={`description-${index}`}
+                    value={exp.description || ""}
                     onChange={(e) =>
-                      handleInputChange(
-                        experience.id,
-                        "description",
-                        e.target.value
-                      )
+                      handleInputChange(index, "description", e.target.value)
                     }
                     rows={4}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors resize-none bg-white"

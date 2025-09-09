@@ -1,6 +1,7 @@
-// utils/helper.ts
-export function formatYearMonth(dateString: string): string {
-  if (!dateString) return "";
-  const date = new Date(dateString);
-  return date.toLocaleDateString("en-US", { year: "numeric", month: "short" });
+
+export function formatYearMonth(date: string | Date | null | undefined): string {
+  if (!date) return "";
+
+  const d = typeof date === "string" ? new Date(date) : date;
+  return d.toLocaleDateString("en-US", { year: "numeric", month: "short" });
 }

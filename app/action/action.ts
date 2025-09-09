@@ -12,9 +12,9 @@ export async function getUserResume(
       include: {
         template: true,
         experience: { orderBy: { startDate: "desc" } },
-        education: { orderBy: { startDate: "desc" } },
-        project: true,
-        certification: { orderBy: { year: "desc" } },
+        educations: { orderBy: { startDate: "desc" } },
+        projects: true,
+        certifications: { orderBy: { year: "desc" } },
       },
       orderBy: { updatedAt: "desc" },
     });
@@ -60,7 +60,7 @@ export async function updateResumeTitle(resumeId: string, title: string) {
 
 export async function deleteResume(resumeId: string, userId: string) {
   try {
-    await prisma.resume.delete({
+    const deleted = await prisma.resume.delete({
       where: { id: resumeId },
     });
 
@@ -73,7 +73,7 @@ export async function deleteResume(resumeId: string, userId: string) {
 
     return {
       success: true,
-      message: "Resume deleted successfully!",
+      message: `${deleted.title} Resume  deleted successfully!`,
       data: serialized,
     };
   } catch (error) {

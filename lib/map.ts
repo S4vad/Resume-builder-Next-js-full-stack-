@@ -1,6 +1,6 @@
 import { ResumeState } from "@/types/types";
 
-export default function mapPrismaResumeToState(resume: any): ResumeState {
+export default function mapPrismaResumeToState(resume: ResumeState): ResumeState {
   return {
     ...resume,
     createdAt: resume.createdAt ? new Date(resume.createdAt).toISOString() : undefined,

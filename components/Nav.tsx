@@ -35,7 +35,7 @@ const Navbar = () => {
               className="rounded-full"
             />
             <button
-              className="bg-red-200 py-1 px-2 text-orange-600 rounded hover:cursor-pointer hover:bg-red-300 hover:text-white"
+              className="bg-slate-100 shadow-sm py-1 px-2 text-orange-600 rounded hover:cursor-pointer hover:bg-red-300 hover:text-white"
               onClick={async () => await signOut()}
             >
               Logout

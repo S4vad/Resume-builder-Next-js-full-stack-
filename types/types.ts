@@ -8,10 +8,14 @@ import type {
 } from "@prisma/client";
 
 // Use Prisma types directly for basic entities
-export type Experience = PrismaExperience;
-export type Education = PrismaEducation;
-export type Project = PrismaProject;
-export type Certification = PrismaCertification;
+export type Experience = Omit<PrismaExperience, "createdAt" | "updatedAt">;
+export type Education = Omit<PrismaEducation, "createdAt" | "updatedAt">;
+export type Project = Omit<PrismaProject, "createdAt" | "updatedAt">;
+export type Certification = Omit<
+  PrismaCertification,
+  "createdAt" | "updatedAt"
+>;
+
 export type Template = PrismaTemplate;
 
 // Extend Prisma Resume for frontend-specific needs
@@ -19,9 +23,9 @@ export interface ResumeState
   extends Omit<PrismaResume, "createdAt" | "updatedAt"> {
   // Add relations manually
   experience: Experience[];
-  education: Education[];
-  project: Project[];
-  certification: Certification[];
+  educations: Education[];
+  projects: Project[];
+  certifications: Certification[];
 
   // Convert dates to strings for frontend
   createdAt?: string;

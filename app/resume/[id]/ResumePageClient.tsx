@@ -1,5 +1,4 @@
 "use client";
-
 import Modal from "@/components/Modal";
 import ResumeEdit from "@/components/ResumeEdit";
 import ResumeHeader from "@/components/ResumeHeader";
@@ -8,6 +7,9 @@ import { CircleArrowLeft } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
 import Image from "next/image";
+import { useAppDispatch } from "@/store/hooks";
+import { loadResume } from "@/store/slices/resumeSlice";
+import { ResumeState } from "@/types/types";
 const templates = [
   "/templates/Resume1.png",
   "/templates/Resume2.png",
@@ -17,12 +19,14 @@ const templates = [
 export default function ResumePageClient({ id }: { id: string }) {
   const [showTemplates, setShowTemplates] = useState(false);
   const [selectedImage, setSelectedImage] = useState(templates[0]);
+  const dispatch = useAppDispatch();
 
   return (
     <>
       <Link
         href="/dashboard"
         className="group text-gray-700 font-medium text-xs absolute left-8 top-30 flex items-center gap-1 transition hover:-translate-x-1"
+        onClick={() => dispatch(loadResume({} as ResumeState))}
       >
         <CircleArrowLeft className="text-gray-600 size-3 transition group-hover:text-blue-700" />
         <span className="underline transition group-hover:text-blue-700">
@@ -37,9 +41,11 @@ export default function ResumePageClient({ id }: { id: string }) {
             setshowTemplates={() => setShowTemplates(true)}
           />
         </div>
-        <div className="flex items-center">
+        <div className="grid grid-cols-2 gap-4">
           <ResumeEdit id={id} />
-          <ResumePreview id={id} />
+          <div className="flex justify-center border-1 rounded-lg border-gray-400 ">
+            <ResumePreview />
+          </div>
         </div>
       </div>
 
@@ -57,7 +63,11 @@ export default function ResumePageClient({ id }: { id: string }) {
                   <div
                     key={index}
                     onClick={() => setSelectedImage(template)}
-                  className={selectedImage===template ?"border-2 border-blue-400 rounded-lg":"border-none"}
+                    className={
+                      selectedImage === template
+                        ? "border-2 border-blue-400 rounded-lg"
+                        : "border-none"
+                    }
                   >
                     <Image
                       src={template}

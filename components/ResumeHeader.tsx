@@ -59,10 +59,12 @@ const ResumeHeader = ({
   return (
     <div className="w-full h-[80px] bg-gradient-to-r from-fuchsia-50 to-violet-50 rounded-xl p-3 px-10 flex items-center justify-between">
       <form
+        suppressHydrationWarning
         className="flex  items-center text-2xl"
         onSubmit={async (e: React.FormEvent<HTMLFormElement>) => {
           e.preventDefault();
           await updateResumeTitle(id, input);
+          setEdit(!edit);
         }}
       >
         {edit && input.length > 0 ? (
@@ -78,7 +80,6 @@ const ResumeHeader = ({
         )}
         <button
           type="submit"
-          onClick={() => setEdit(!edit)}
           className={`${
             edit ? "bg-violet-600 text-white" : "bg-slate-100"
           } p-1 rounded-lg ml-5`}
@@ -86,6 +87,7 @@ const ResumeHeader = ({
           {edit ? <IoMdCheckmark size={25} /> : <LiaEditSolid size={25} />}
         </button>
       </form>
+
       <div className="flex items-center gap-4 ">
         <div
           className="flex items-center gap-2 p-2 bg-violet-200 rounded-xl text-violet-600 cursor-pointer hover:bg-violet-300 hover:text-violet-900 transition duration-300"
