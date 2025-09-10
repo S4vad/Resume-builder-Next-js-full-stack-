@@ -1,16 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import { formatYearMonth } from "../../lib/helper";
 import { useAppSelector } from "@/store/hooks";
-import type { ResumeState } from "../../types/types";
 
-interface TemplateThreeProps {
-  containerWidth: number;
-  resumeData?: Partial<ResumeState>; // Keep as optional fallback
-}
-
-const TemplateThree: React.FC<TemplateThreeProps> = ({
-  containerWidth
-}) => {
+const TemplateThree: React.FC = () => {
   const resumeData = useAppSelector((state) => state.resume);
 
   const profileInfo = {
@@ -59,28 +51,12 @@ const TemplateThree: React.FC<TemplateThreeProps> = ({
     year: cert.year || "",
   }));
 
-  // Transform skills array to objects with name property
   const skills = (resumeData.skills || []).map((skill) => ({
     name: typeof skill === "string" ? skill : skill,
   }));
 
   const interests = resumeData.intrests || [];
 
-  const resumeRef = useRef<HTMLDivElement>(null);
-  const [baseWidth, setBaseWidth] = useState<number>(1100);
-  const [scale, setScale] = useState<number>(1);
-
-  useEffect(() => {
-    if (resumeRef.current) {
-      const actualBaseWidth = resumeRef.current.offsetWidth;
-      setBaseWidth(actualBaseWidth);
-      if (containerWidth > 0) {
-        setScale(containerWidth / actualBaseWidth);
-      }
-    }
-  }, [containerWidth]);
-
-  // Group skills by category
   const groupedSkills: Record<string, string[]> = {
     "Automation & Test tools": [],
     "Product Management": [],
@@ -105,16 +81,7 @@ const TemplateThree: React.FC<TemplateThreeProps> = ({
   });
 
   return (
-    <div
-      ref={resumeRef}
-      className="bg-white font-sans a4-wrapper text-black max-w-screen-lg mx-auto"
-      style={{
-        transform: containerWidth > 0 ? `scale(${scale})` : "none",
-        transformOrigin: "top left",
-        width: containerWidth > 0 ? `${baseWidth}px` : "auto",
-        height: "auto",
-      }}
-    >
+    <div className="bg-white font-sans text-black max-w-[210mm] mx-auto">
       {/* Header Section */}
       <header className="px-8 pt-8 pb-4 mb-2">
         <div className="text-center">

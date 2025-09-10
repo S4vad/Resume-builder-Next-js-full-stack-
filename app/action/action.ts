@@ -10,7 +10,6 @@ export async function getUserResume(
     const resumes = await prisma.resume.findMany({
       where: { userId },
       include: {
-        template: true,
         experience: { orderBy: { startDate: "desc" } },
         educations: { orderBy: { startDate: "desc" } },
         projects: true,

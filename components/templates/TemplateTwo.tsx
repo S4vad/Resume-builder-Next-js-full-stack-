@@ -1,24 +1,15 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import { LuExternalLink, LuGithub } from "react-icons/lu";
 import { formatYearMonth } from "../../lib/helper";
 import { useAppSelector } from "@/store/hooks";
-import type { ResumeState } from "../../types/types";
 
 const sectionTitleClass =
   "text-base font-bold uppercase tracking-wide mb-1 pb-1 border-b border-gray-300";
 
-interface TemplateTwoProps {
-  containerWidth: number;
-  resumeData?: Partial<ResumeState>; // Keep as optional fallback
-}
-
-const TemplateTwo: React.FC<TemplateTwoProps> = ({
-  containerWidth,
-  resumeData: fallbackData,
-}) => {
+const TemplateTwo: React.FC = () => {
   const resumeFromStore = useAppSelector((state) => state.resume);
-  const resumeData = resumeFromStore.id ? resumeFromStore : fallbackData || {};
+  const resumeData = resumeFromStore || {};
 
   const profileInfo = {
     fullName: resumeData.full_name || "",
@@ -77,30 +68,8 @@ const TemplateTwo: React.FC<TemplateTwoProps> = ({
 
   const interests = resumeData.intrests || [];
 
-  const resumeRef = useRef<HTMLDivElement>(null);
-  const [baseWidth, setBaseWidth] = useState<number>(800);
-  const [scale, setScale] = useState<number>(1);
-
-  useEffect(() => {
-    if (resumeRef.current && containerWidth > 0) {
-      const actualWidth = resumeRef.current.offsetWidth;
-      setBaseWidth(actualWidth);
-      setScale(containerWidth / actualWidth);
-    }
-  }, [containerWidth]);
-
   return (
-    <div
-      ref={resumeRef}
-      className="resume-section p-4 bg-white font-sans text-black max-w-4xl mx-auto"
-      style={{
-        transform: containerWidth > 0 ? `scale(${scale})` : undefined,
-        transformOrigin: "top left",
-        width: containerWidth > 0 ? `${baseWidth}px` : undefined,
-        height: "1123px",
-        overflow: "hidden",
-      }}
-    >
+    <div className="resume-section p-4 bg-white font-sans text-black max-w-[210mm] mx-auto">
       {/* Header Section */}
       <div className="text-center mb-2">
         <h1 className="text-2xl font-bold tracking-tight mb-2">

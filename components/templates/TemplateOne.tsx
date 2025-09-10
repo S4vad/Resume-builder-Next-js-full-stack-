@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import { LuMail, LuPhone, LuGithub, LuGlobe } from "react-icons/lu";
 import { RiLinkedinLine } from "react-icons/ri";
 import {
@@ -9,7 +9,6 @@ import {
 } from "./ResumeSection";
 import { formatYearMonth } from "../../lib/helper";
 import { useAppSelector } from "@/store/hooks";
-import type { ResumeState } from "../../types/types";
 
 const DEFAULT_THEME = ["#ffffff", "#0d47a1", "#1e88e5", "#64b5f6", "#bbdefb"];
 
@@ -30,17 +29,9 @@ const Title: React.FC<TitleProps> = ({ text, color }) => (
   </div>
 );
 
-interface TemplateOneProps {
-  containerWidth: number;
-  resumeData?: Partial<ResumeState>; // Keep as optional fallback
-}
-
-const TemplateOne: React.FC<TemplateOneProps> = ({
-  containerWidth,
-  resumeData: fallbackData,
-}) => {
+const TemplateOne: React.FC = () => {
   const resumeFromStore = useAppSelector((state) => state.resume);
-  const resumeData = resumeFromStore.id ? resumeFromStore : fallbackData || {};
+  const resumeData = resumeFromStore || {};
 
   // Transform Redux data to match template expectations
   const profileInfo = {
@@ -86,7 +77,6 @@ const TemplateOne: React.FC<TemplateOneProps> = ({
     year: cert.year || "",
   }));
 
-  // Transform skills and languages arrays to objects with name property
   const skills = (resumeData.skills || []).map((skill) => ({
     name: typeof skill === "string" ? skill : skill,
   }));
@@ -97,28 +87,8 @@ const TemplateOne: React.FC<TemplateOneProps> = ({
 
   const interests = resumeData.intrests || [];
 
-  const resumeRef = useRef<HTMLDivElement>(null);
-  const [baseWidth, setBaseWidth] = useState<number>(800);
-  const [scale, setScale] = useState<number>(1);
-
-  useEffect(() => {
-    if (resumeRef.current && containerWidth > 0) {
-      const actualWidth = resumeRef.current.offsetWidth;
-      setBaseWidth(actualWidth);
-      setScale(containerWidth / actualWidth);
-    }
-  }, [containerWidth]);
-
   return (
-    <div
-      ref={resumeRef}
-      className="p-6 bg-white font-sans text-gray-800"
-      style={{
-        transform: containerWidth > 0 ? `scale(${scale})` : undefined,
-        transformOrigin: "top left",
-        width: containerWidth > 0 ? `${baseWidth}px` : undefined,
-      }}
-    >
+    <div className="p-6 bg-white font-sans text-gray-800 max-w-[210mm] mx-auto">
       {/* Header */}
       <div className="resume-section flex justify-between items-start mb-6">
         <div>
@@ -247,7 +217,6 @@ const TemplateOne: React.FC<TemplateOneProps> = ({
                     description={proj.description}
                     githubLink={proj.github}
                     liveDemoUrl={proj.liveDemo}
-                    
                   />
                 ))}
               </div>

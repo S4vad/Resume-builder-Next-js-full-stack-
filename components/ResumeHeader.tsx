@@ -15,9 +15,11 @@ import { setResumes } from "@/store/slices/userSlice";
 const ResumeHeader = ({
   id,
   setshowTemplates,
+  setShowPrview,
 }: {
   id: string;
   setshowTemplates: () => void;
+  setShowPrview: () => void;
 }) => {
   const [input, setInput] = useState<string>("");
   const [edit, setEdit] = useState<boolean>(false);
@@ -103,7 +105,10 @@ const ResumeHeader = ({
           <RiDeleteBin6Line />
           <span>Delete</span>
         </div>
-        <div className="flex items-center gap-2 p-2 bg-emerald-100 rounded-xl text-emerald-600 cursor-pointer hover:bg-emerald-300 hover:text-emerald-900 transition duration-300">
+        <div
+          className="flex items-center gap-2 p-2 bg-emerald-100 rounded-xl text-emerald-600 cursor-pointer hover:bg-emerald-300 hover:text-emerald-900 transition duration-300"
+          onClick={() => setShowPrview()}
+        >
           <FaRegEye />
           <span>Preview</span>
         </div>

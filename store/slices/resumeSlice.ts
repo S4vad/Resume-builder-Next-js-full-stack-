@@ -13,7 +13,7 @@ export const initialState: ResumeState = {
   title: "",
   full_name: "",
   designation: "",
-  templateId: "",
+  templateName: "templateOne",
   summary: "",
   address: "",
   email: "",
@@ -201,8 +201,8 @@ const resumeSlice = createSlice({
       state.progression = Math.min(100, state.progression! + action.payload);
     },
 
-    setTemplateId: (state, action: PayloadAction<string>) => {
-      state.templateId = action.payload;
+    setTemplateName: (state, action: PayloadAction<string>) => {
+      state.templateName = action.payload;
     },
 
     // Load complete resume data
@@ -265,7 +265,7 @@ export const {
   removeCertification,
   updateProgression,
   incrementProgress,
-  setTemplateId,
+  setTemplateName,
   loadResume,
   setLoading,
   setError,

@@ -1,7 +1,21 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { Education, Experience } from "@/types/types";
+import { Certification, Education, Experience, Project } from "@/types/types";
+import { TemplateName } from "@prisma/client";
+
+export async function addTemplateDb(id: string, template: TemplateName) {
+  try {
+    const response = await prisma.resume.update({
+      where: { id },
+      data: { templateName: template },
+    });
+    return { success: true, data: response };
+  } catch (error) {
+    console.error("Error updating template:", error);
+    return { success: false, error };
+  }
+}
 
 interface UpdateResumeData {
   full_name?: string;
@@ -17,7 +31,6 @@ export async function updatePersonalInfo(id: string, data: UpdateResumeData) {
         full_name: data.full_name,
         designation: data.designation,
         summary: data.summary,
-  
       },
     });
     return { success: true, data: updated };
