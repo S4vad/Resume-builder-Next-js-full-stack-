@@ -9,6 +9,8 @@ import {
 import { Project } from "@/types/types";
 import { addProjectsDb } from "@/app/action/formAction";
 import { useRouter } from "next/navigation";
+import { useFormValidation } from "@/hooks/useFormValidation";
+import { ErrorDisplay } from "@/components/ErrorDisplay";
 
 interface Props {
   next: () => void;
@@ -20,12 +22,18 @@ const ProjectsForm = ({ next, previous, id }: Props) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { projects } = useAppSelector((state) => state.resume);
+  const { errors, showErrors, validateAndUpdateProgress, clearErrors } =
+    useFormValidation("projects");
 
   const handleInputChange = (
     index: number,
     field: keyof Omit<Project, "id" | "resumeId">,
     value: string | string[]
   ) => {
+    if (showErrors) {
+      clearErrors();
+    }
+
     const updatedProject = { ...projects[index], [field]: value };
     dispatch(updateProject({ index, project: updatedProject }));
   };
@@ -52,6 +60,10 @@ const ProjectsForm = ({ next, previous, id }: Props) => {
   };
 
   const handleTechnologiesChange = (index: number, techString: string) => {
+    if (showErrors) {
+      clearErrors();
+    }
+
     const technologies = techString
       .split(",")
       .map((tech) => tech.trim())
@@ -61,10 +73,16 @@ const ProjectsForm = ({ next, previous, id }: Props) => {
 
   const handleBack = () => previous();
   const handleNext = async () => {
+    if (!validateAndUpdateProgress()) {
+      return;
+    }
     await saveProjects();
     next();
   };
   const handleSaveAndExit = async () => {
+    if (!validateAndUpdateProgress()) {
+      return;
+    }
     await saveProjects();
     router.push("/dashboard");
   };
@@ -236,6 +254,7 @@ const ProjectsForm = ({ next, previous, id }: Props) => {
           <Plus size={18} />
           Add Project
         </button>
+        <ErrorDisplay errors={errors} showErrors={showErrors} />
       </div>
 
       <div className="flex items-center justify-between pt-6 border-t border-gray-200 mt-6">

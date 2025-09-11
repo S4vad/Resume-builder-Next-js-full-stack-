@@ -5,6 +5,8 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { updateBasicInfo } from "@/store/slices/resumeSlice";
 import { useRouter } from "next/navigation";
 import { updatePersonalInfo } from "@/app/action/formAction";
+import { useFormValidation } from "@/hooks/useFormValidation";
+import { ErrorDisplay } from "@/components/ErrorDisplay";
 
 interface PersonalInfoData {
   fullName: string;
@@ -22,6 +24,8 @@ const PersonalInformationForm = ({ next, id }: Props) => {
   const dispatch = useAppDispatch();
   const resume = useAppSelector((state) => state.resume);
   const router = useRouter();
+  const { errors, showErrors, validateAndUpdateProgress, clearErrors } =
+    useFormValidation("personal");
 
   const [formData, setFormData] = useState<PersonalInfoData>({
     fullName: "",
@@ -40,6 +44,10 @@ const PersonalInformationForm = ({ next, id }: Props) => {
   const handleInputChange = (field: keyof PersonalInfoData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
 
+    if (showErrors) {
+      clearErrors();
+    }
+
     dispatch(
       updateBasicInfo(
         field === "fullName"
@@ -52,6 +60,9 @@ const PersonalInformationForm = ({ next, id }: Props) => {
   };
 
   const handleNext = async () => {
+    if (!validateAndUpdateProgress()) {
+      return;
+    }
     await updatePersonalInfo(id, {
       full_name: formData.fullName,
       designation: formData.designation,
@@ -61,6 +72,9 @@ const PersonalInformationForm = ({ next, id }: Props) => {
   };
 
   const handleSaveAndExit = async () => {
+    if (!validateAndUpdateProgress()) {
+      return;
+    }
     const res = await updatePersonalInfo(id, {
       full_name: formData.fullName,
       designation: formData.designation,
@@ -140,6 +154,7 @@ const PersonalInformationForm = ({ next, id }: Props) => {
           </div>
         </div>
       </div>
+      <ErrorDisplay errors={errors} showErrors={showErrors} />
 
       {/* Action Buttons */}
       <div className="flex items-center justify-between pt-6 border-t border-gray-200">

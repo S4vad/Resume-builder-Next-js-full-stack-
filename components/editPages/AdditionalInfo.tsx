@@ -4,6 +4,8 @@ import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { updateLanguages, updateInterests } from "@/store/slices/resumeSlice";
 import { updateLanguagesDb, updateInterestsDb } from "@/app/action/formAction";
 import { useRouter } from "next/navigation";
+import { useFormValidation } from "@/hooks/useFormValidation";
+import { ErrorDisplay } from "@/components/ErrorDisplay";
 
 interface Props {
   next: () => void;
@@ -16,6 +18,8 @@ const AdditionalInfoForm = ({ next, previous, id }: Props) => {
   const router = useRouter();
   const { languages: reduxLanguages, intrests: reduxInterests } =
     useAppSelector((state) => state.resume);
+  const { errors, showErrors, validateAndUpdateProgress, clearErrors } =
+    useFormValidation("additional");
 
   const [inputLanguage, setInputLanguage] = useState("");
   const [languages, setLanguages] = useState<string[]>(reduxLanguages);
@@ -47,7 +51,7 @@ const AdditionalInfoForm = ({ next, previous, id }: Props) => {
     "Fashion",
     "History",
     "Science",
-    "Literature"
+    "Literature",
   ];
 
   useEffect(() => {
@@ -59,8 +63,13 @@ const AdditionalInfoForm = ({ next, previous, id }: Props) => {
   }, [interests, dispatch]);
 
   const handleAddLanguage = async () => {
+    if (showErrors) {
+      clearErrors();
+    }
+
     const trimmedLanguage = inputLanguage.trim();
-    if (trimmedLanguage.length === 0 || languages.includes(trimmedLanguage)) return;
+    if (trimmedLanguage.length === 0 || languages.includes(trimmedLanguage))
+      return;
 
     const updatedLanguages = [...languages, trimmedLanguage];
 
@@ -74,7 +83,9 @@ const AdditionalInfoForm = ({ next, previous, id }: Props) => {
   };
 
   const handleRemoveLanguage = async (languageToRemove: string) => {
-    const updatedLanguages = languages.filter((lang) => lang !== languageToRemove);
+    const updatedLanguages = languages.filter(
+      (lang) => lang !== languageToRemove
+    );
 
     const res = await updateLanguagesDb(id, updatedLanguages);
     if (res.success) {
@@ -101,8 +112,18 @@ const AdditionalInfoForm = ({ next, previous, id }: Props) => {
   };
 
   const handleBack = () => previous();
-  const handleNext = () => next();
-  const handleSaveAndExit = () => router.push("/dashboard");
+  const handleNext = () => {
+    if (!validateAndUpdateProgress()) {
+      return;
+    }
+    next();
+  };
+  const handleSaveAndExit = () => {
+    if (!validateAndUpdateProgress()) {
+      return;
+    }
+    router.push("/dashboard");
+  };
 
   return (
     <div className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-sm">
@@ -112,7 +133,6 @@ const AdditionalInfoForm = ({ next, previous, id }: Props) => {
         </h2>
 
         <div className="space-y-8">
-
           <div>
             <h3 className="text-lg font-medium text-gray-800 mb-4 flex items-center gap-2">
               <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
@@ -183,11 +203,13 @@ const AdditionalInfoForm = ({ next, previous, id }: Props) => {
             {/* Selected interests counter */}
             {interests.length > 0 && (
               <div className="mt-4 text-sm text-gray-600">
-                Selected: {interests.length} interest{interests.length !== 1 ? 's' : ''}
+                Selected: {interests.length} interest
+                {interests.length !== 1 ? "s" : ""}
               </div>
             )}
           </div>
         </div>
+        <ErrorDisplay errors={errors} showErrors={showErrors} />
       </div>
 
       {/* Action Buttons */}

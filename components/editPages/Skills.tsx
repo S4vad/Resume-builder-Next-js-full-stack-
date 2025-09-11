@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, Save, ChevronRight, Plus, X } from "lucide-react";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
-import { updateLanguages, updateInterests } from "@/store/slices/resumeSlice";
-import { updateLanguagesDb, updateInterestsDb } from "@/app/action/formAction";
+import { updateSkills } from "@/store/slices/resumeSlice";
+import { updateSkillsDb } from "@/app/action/formAction";
 import { useRouter } from "next/navigation";
+import { useFormValidation } from "@/hooks/useFormValidation";
+import { ErrorDisplay } from "@/components/ErrorDisplay";
 
 interface Props {
   next: () => void;
@@ -11,185 +13,127 @@ interface Props {
   id: string;
 }
 
-const AdditionalInfoForm = ({ next, previous, id }: Props) => {
+const SkillsForm = ({ next, previous, id }: Props) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const { languages: reduxLanguages, intrests: reduxInterests } =
-    useAppSelector((state) => state.resume);
+  const { skills: reduxSkills } = useAppSelector((state) => state.resume);
+  const { errors, showErrors, validateAndUpdateProgress, clearErrors } =
+    useFormValidation("skills");
 
-  const [inputLanguage, setInputLanguage] = useState("");
-  const [languages, setLanguages] = useState<string[]>(reduxLanguages);
-  const [interests, setInterests] = useState<string[]>(reduxInterests);
-
-  // Predefined interests list
-  const predefinedInterests = [
-    "Reading",
-    "Photography",
-    "Traveling",
-    "Music",
-    "Sports",
-    "Cooking",
-    "Gaming",
-    "Art",
-    "Dancing",
-    "Writing",
-    "Fitness",
-    "Movies",
-    "Technology",
-    "Nature",
-    "Volunteering",
-    "Learning Languages",
-    "Meditation",
-    "Hiking",
-    "Swimming",
-    "Cycling",
-    "Gardening",
-    "Fashion",
-    "History",
-    "Science",
-    "Literature"
-  ];
+  const [inputSkill, setInputSkill] = useState("");
+  const [skills, setSkills] = useState<string[]>(reduxSkills);
 
   useEffect(() => {
-    dispatch(updateLanguages(languages));
-  }, [languages, dispatch]);
+    dispatch(updateSkills(skills));
+  }, [skills, dispatch]);
 
-  useEffect(() => {
-    dispatch(updateInterests(interests));
-  }, [interests, dispatch]);
+  const handleAddSkill = async () => {
+    if (showErrors) {
+      clearErrors();
+    }
+    const trimmedSkill = inputSkill.trim();
+    if (trimmedSkill.length === 0 || skills.includes(trimmedSkill)) return;
 
-  const handleAddLanguage = async () => {
-    const trimmedLanguage = inputLanguage.trim();
-    if (trimmedLanguage.length === 0 || languages.includes(trimmedLanguage)) return;
+    const updatedSkills = [...skills, trimmedSkill];
 
-    const updatedLanguages = [...languages, trimmedLanguage];
-
-    // Save immediately to DB
-    const res = await updateLanguagesDb(id, updatedLanguages);
+    const res = await updateSkillsDb(id, updatedSkills);
     if (res.success) {
-      setLanguages(updatedLanguages);
-      setInputLanguage("");
+      setSkills(updatedSkills);
+      setInputSkill("");
     } else {
-      console.error("Failed to update languages in DB");
+      console.error("Failed to update skills in DB");
     }
   };
 
-  const handleRemoveLanguage = async (languageToRemove: string) => {
-    const updatedLanguages = languages.filter((lang) => lang !== languageToRemove);
+  const handleRemoveSkill = async (skillToRemove: string) => {
+    const updatedSkills = skills.filter((s) => s !== skillToRemove);
 
-    const res = await updateLanguagesDb(id, updatedLanguages);
+    const res = await updateSkillsDb(id, updatedSkills);
     if (res.success) {
-      setLanguages(updatedLanguages);
+      setSkills(updatedSkills);
     } else {
-      console.error("Failed to remove language from DB");
+      console.error("Failed to remove skill from DB");
     }
   };
 
-  const toggleInterest = async (interest: string) => {
-    let updatedInterests;
-    if (interests.includes(interest)) {
-      updatedInterests = interests.filter((item) => item !== interest);
-    } else {
-      updatedInterests = [...interests, interest];
-    }
-
-    // Save immediately to DB
-    const res = await updateInterestsDb(id, updatedInterests);
-    if (res.success) {
-      setInterests(updatedInterests);
-    } else {
-      console.error("Failed to update interests in DB");
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleAddSkill();
     }
   };
 
   const handleBack = () => previous();
-  const handleNext = () => next();
-  const handleSaveAndExit = () => router.push("/dashboard");
+  const handleNext = () => {
+    if (!validateAndUpdateProgress()) {
+      return;
+    }
+    next();
+  };
+  const handleSaveAndExit = () => {
+    if (!validateAndUpdateProgress()) {
+      return;
+    }
+    router.push("/dashboard");
+  };
 
   return (
     <div className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-sm">
       <div className="mb-8">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-6">
-          Additional Information
-        </h2>
+        <h2 className="text-2xl font-semibold text-gray-800 mb-6">Skills</h2>
 
-        <div className="space-y-8">
-          {/* Languages Section */}
-          <div>
-            <h3 className="text-lg font-medium text-gray-800 mb-4 flex items-center gap-2">
-              <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
-              Languages
-            </h3>
-
-            {/* Display existing languages */}
-            <div className="flex flex-wrap gap-3 mb-6">
-              {languages.map((language) => (
-                <div
-                  key={language}
-                  className="bg-purple-200 px-4 py-2 rounded-lg flex items-center gap-2"
-                >
-                  <span>{language}</span>
-                  <button
-                    onClick={() => handleRemoveLanguage(language)}
-                    className="text-gray-600 hover:text-red-500 transition-colors"
-                  >
-                    <X size={18} />
-                  </button>
-                </div>
-              ))}
-            </div>
-
-            {/* Add new language */}
-            <div className="flex items-center gap-3">
-              <input
-                type="text"
-                value={inputLanguage}
-                onChange={(e) => setInputLanguage(e.target.value)}
-                placeholder="Enter new language (e.g. English, Spanish)"
-                className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors bg-white"
-              />
-              <button
-                onClick={handleAddLanguage}
-                className="flex items-center gap-2 px-6 py-3 text-white bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 rounded-lg transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
-              >
-                <Plus size={18} />
-                Add Language
-              </button>
-            </div>
+        <div className="mb-6">
+          <label
+            htmlFor="skill-input"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
+            Add Skill
+          </label>
+          <div className="flex items-center gap-3">
+            <input
+              type="text"
+              id="skill-input"
+              value={inputSkill}
+              onChange={(e) => setInputSkill(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="Enter skill name"
+              className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors bg-white"
+            />
+            <button
+              onClick={handleAddSkill}
+              className="flex items-center gap-2 px-6 py-3 text-white bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 rounded-lg transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
+            >
+              <Plus size={18} />
+              Add Skill
+            </button>
           </div>
+        </div>
 
-          {/* Interests Section */}
-          <div>
-            <h3 className="text-lg font-medium text-gray-800 mb-4 flex items-center gap-2">
-              <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
-              Interests
-            </h3>
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {predefinedInterests.map((interest) => (
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-3">
+            Your Skills
+          </label>
+          <div className="flex flex-wrap gap-3">
+            {skills.map((skill) => (
+              <div
+                key={skill}
+                className="bg-blue-200 px-4 py-2 rounded-lg flex items-center gap-2"
+              >
+                <span>{skill}</span>
                 <button
-                  key={interest}
-                  type="button"
-                  onClick={() => toggleInterest(interest)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 border-2 ${
-                    interests.includes(interest)
-                      ? "bg-gradient-to-r from-orange-600 to-red-600 text-white border-transparent shadow-lg transform scale-105"
-                      : "bg-white text-gray-700 border-gray-300 hover:border-orange-300 hover:bg-orange-50"
-                  }`}
+                  onClick={() => handleRemoveSkill(skill)}
+                  className="text-gray-600 hover:text-red-500 transition-colors"
                 >
-                  {interest}
+                  <X size={18} />
                 </button>
-              ))}
-            </div>
-
-            {/* Selected interests counter */}
-            {interests.length > 0 && (
-              <div className="mt-4 text-sm text-gray-600">
-                Selected: {interests.length} interest{interests.length !== 1 ? 's' : ''}
               </div>
+            ))}
+            {skills.length === 0 && (
+              <p className="text-gray-500 text-sm">No skills added yet.</p>
             )}
           </div>
         </div>
+        <ErrorDisplay errors={errors} showErrors={showErrors} />
       </div>
 
       {/* Action Buttons */}
@@ -215,7 +159,7 @@ const AdditionalInfoForm = ({ next, previous, id }: Props) => {
             onClick={handleNext}
             className="flex items-center gap-2 px-6 py-3 text-white bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors font-medium"
           >
-            Preview & Download
+            Next
             <ChevronRight size={18} />
           </button>
         </div>
@@ -224,4 +168,4 @@ const AdditionalInfoForm = ({ next, previous, id }: Props) => {
   );
 };
 
-export default AdditionalInfoForm;
+export default SkillsForm;

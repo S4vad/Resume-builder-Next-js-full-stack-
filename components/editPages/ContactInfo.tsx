@@ -5,6 +5,8 @@ import { updateContactInfo } from "@/app/action/formAction";
 import { ResumeState } from "@/types/types";
 import { updateBasicInfo } from "@/store/slices/resumeSlice";
 import { useRouter } from "next/navigation";
+import { useFormValidation } from "@/hooks/useFormValidation";
+import { ErrorDisplay } from "@/components/ErrorDisplay";
 
 interface ContactInfoData {
   address: string;
@@ -24,6 +26,8 @@ const ContactInformationForm = ({ next, previous, id }: Props) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const resume = useAppSelector((state) => state.resume);
+  const { errors, showErrors, validateAndUpdateProgress, clearErrors } =
+    useFormValidation("contact");
   const [formData, setFormData] = useState<ContactInfoData>({
     address: resume.address || "",
     email: resume.email || "",
@@ -38,6 +42,10 @@ const ContactInformationForm = ({ next, previous, id }: Props) => {
       ...prev,
       [field]: value,
     }));
+
+    if (showErrors) {
+      clearErrors();
+    }
 
     // Map form field to Redux field
     const payload: Partial<ResumeState> = {};
@@ -64,11 +72,17 @@ const ContactInformationForm = ({ next, previous, id }: Props) => {
   });
 
   const handleNext = async () => {
+    if (!validateAndUpdateProgress()) {
+      return;
+    }
     const res = await updateContactInfo(id, getUpdateData());
     if (res.success) next();
   };
 
   const handleSaveAndExit = async () => {
+    if (!validateAndUpdateProgress()) {
+      return;
+    }
     const res = await updateContactInfo(id, getUpdateData());
     if (res.success) router.push("/dashboard");
     else console.error("Failed to save resume:", res.error);
@@ -193,6 +207,7 @@ const ContactInformationForm = ({ next, previous, id }: Props) => {
               placeholder="https://yourwebsite.com"
             />
           </div>
+          <ErrorDisplay errors={errors} showErrors={showErrors} />
         </div>
       </div>
 

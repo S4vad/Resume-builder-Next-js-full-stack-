@@ -9,6 +9,9 @@ import {
 import { Experience } from "@/types/types";
 import { addExperiencesDb } from "@/app/action/formAction";
 import { useRouter } from "next/navigation";
+import { useFormValidation } from "@/hooks/useFormValidation";
+import { ErrorDisplay } from "@/components/ErrorDisplay";
+
 
 interface Props {
   next: () => void;
@@ -20,12 +23,18 @@ const WorkExperienceForm = ({ next, previous, id }: Props) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { experience } = useAppSelector((state) => state.resume);
+  const { errors, showErrors, validateAndUpdateProgress, clearErrors } =
+    useFormValidation("experience");
 
   const handleInputChange = (
     index: number,
     field: keyof Omit<Experience, "id" | "resumeId">,
     value: string
   ) => {
+    if (showErrors) {
+      clearErrors();
+    }
+
     const updatedExperience = {
       ...experience[index],
       [field]: value,
@@ -58,11 +67,17 @@ const WorkExperienceForm = ({ next, previous, id }: Props) => {
   };
 
   const handleNext = async () => {
+    if (!validateAndUpdateProgress()) {
+      return;
+    }
     await saveExperiences();
     next();
   };
 
   const handleSaveAndExit = async () => {
+    if (!validateAndUpdateProgress()) {
+      return;
+    }
     await saveExperiences();
     router.push("/dashboard");
   };
@@ -257,6 +272,7 @@ const WorkExperienceForm = ({ next, previous, id }: Props) => {
             <Plus size={18} />
             Add Work Experience
           </button>
+          <ErrorDisplay errors={errors} showErrors={showErrors} />
         </div>
       </div>
 

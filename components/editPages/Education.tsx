@@ -9,6 +9,8 @@ import {
 import { Education } from "@/types/types";
 import { addEducationsDb } from "@/app/action/formAction";
 import { useRouter } from "next/navigation";
+import { useFormValidation } from "@/hooks/useFormValidation";
+import { ErrorDisplay } from "@/components/ErrorDisplay";
 
 interface Props {
   next: () => void;
@@ -20,12 +22,18 @@ const EducationForm = ({ next, previous, id }: Props) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { educations } = useAppSelector((state) => state.resume);
+  const { errors, showErrors, validateAndUpdateProgress, clearErrors } =
+    useFormValidation("education");
 
   const handleInputChange = (
     index: number,
     field: keyof Omit<Education, "id" | "resumeId">,
     value: string
   ) => {
+    if (showErrors) {
+      clearErrors();
+    }
+
     const updatedEducation = { ...educations[index], [field]: value };
     dispatch(updateEducation({ index, education: updatedEducation }));
   };
@@ -50,10 +58,16 @@ const EducationForm = ({ next, previous, id }: Props) => {
 
   const handleBack = () => previous();
   const handleNext = async () => {
+    if (!validateAndUpdateProgress()) {
+      return;
+    }
     await saveEducations();
     next();
   };
   const handleSaveAndExit = async () => {
+    if (!validateAndUpdateProgress()) {
+      return;
+    }
     await saveEducations();
     router.push("/dashboard");
   };
@@ -175,6 +189,7 @@ const EducationForm = ({ next, previous, id }: Props) => {
           <Plus size={18} /> Add Education
         </button>
       </div>
+      <ErrorDisplay errors={errors} showErrors={showErrors} />
 
       <div className="flex items-center justify-between pt-6 border-t border-gray-200 mt-6">
         <button

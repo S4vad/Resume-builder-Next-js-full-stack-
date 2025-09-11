@@ -9,6 +9,8 @@ import {
 import { Certification } from "@/types/types";
 import { addCertificationsDb } from "@/app/action/formAction";
 import { useRouter } from "next/navigation";
+import { useFormValidation } from "@/hooks/useFormValidation";
+import { ErrorDisplay } from "@/components/ErrorDisplay";
 
 interface Props {
   next: () => void;
@@ -20,14 +22,22 @@ const CertificationsForm = ({ next, previous, id }: Props) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { certifications } = useAppSelector((state) => state.resume);
+  const { errors, showErrors, validateAndUpdateProgress, clearErrors } =
+    useFormValidation("certifications");
 
   const handleInputChange = (
     index: number,
     field: keyof Omit<Certification, "id" | "resumeId">,
     value: string
   ) => {
+    if (showErrors) {
+      clearErrors();
+    }
+
     const updatedCertification = { ...certifications[index], [field]: value };
-    dispatch(updateCertification({ index, certification: updatedCertification }));
+    dispatch(
+      updateCertification({ index, certification: updatedCertification })
+    );
   };
 
   const addCertificationEntry = () => {
@@ -49,10 +59,16 @@ const CertificationsForm = ({ next, previous, id }: Props) => {
 
   const handleBack = () => previous();
   const handleNext = async () => {
+    if (!validateAndUpdateProgress()) {
+      return;
+    }
     await saveCertifications();
     next();
   };
   const handleSaveAndExit = async () => {
+    if (!validateAndUpdateProgress()) {
+      return;
+    }
     await saveCertifications();
     router.push("/dashboard");
   };
@@ -155,6 +171,7 @@ const CertificationsForm = ({ next, previous, id }: Props) => {
           <Plus size={18} />
           Add Certification
         </button>
+        <ErrorDisplay errors={errors} showErrors={showErrors} />
       </div>
 
       <div className="flex items-center justify-between pt-6 border-t border-gray-200 mt-6">
