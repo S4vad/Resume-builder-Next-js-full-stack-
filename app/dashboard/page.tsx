@@ -11,11 +11,13 @@ import mapPrismaResumeToState from "@/lib/map";
 import { ClipLoader } from "react-spinners";
 import { ResumeSummaryCard } from "@/components/Card";
 import toast from "react-hot-toast";
+import { calculateResumeCompletion } from "@/lib/completionCalculator";
 
 const Dashboard = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [title, setTitle] = useState<string>("");
   const [loading, setLoading] = useState(false);
+  const [cardLoading, setCardLoading] = useState<string | null>(null);
 
   const dispatch = useAppDispatch();
   const router = useRouter();
@@ -23,6 +25,7 @@ const Dashboard = () => {
   const { resumes, currentUser, isLoading } = useAppSelector(
     (state) => state.user
   );
+
   const Mappedresumes = resumes.map(mapPrismaResumeToState);
 
   const handleDeleteResume = async (id: string) => {
@@ -81,22 +84,32 @@ const Dashboard = () => {
         </Button>
       </div>
       {!isLoading && resumes?.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-8">
-          {Mappedresumes.map((resume) => (
-            <div
-              key={resume.id}
-              onClick={() => router.push(`/resume/${resume.id}`)}
-            >
-              <ResumeSummaryCard
-                title={resume.title}
-                createdAt={resume.createdAt || ""}
-                updatedAt={resume.updatedAt || ""}
-                completion={resume.progression ?? 0}
-                onSelect={() => console.log("seletect")}
-                onDelete={() => handleDeleteResume(resume.id)}
-              />
-            </div>
-          ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-8">
+          {Mappedresumes.map((resume) => {
+            const completionData = calculateResumeCompletion(resume);
+            const completion = completionData.percentage;
+
+            return (
+              <div
+                key={resume.id}
+                onClick={() => {
+                  setCardLoading(resume.id);
+                  router.push(`/resume/${resume.id}`);
+                }}
+              >
+                <ResumeSummaryCard
+                  title={resume.title}
+                  createdAt={resume.createdAt || ""}
+                  updatedAt={resume.updatedAt || ""}
+                  completion={completion}
+                  sectionDetails={completionData.sectionDetails}
+                  onSelect={() => console.log("select")}
+                  onDelete={() => handleDeleteResume(resume.id)}
+                  isLoading={cardLoading === resume.id}
+                />
+              </div>
+            );
+          })}
         </div>
       ) : (
         <div className="flex items-center flex-col gap-3   text-violet-800   mt-20  ">

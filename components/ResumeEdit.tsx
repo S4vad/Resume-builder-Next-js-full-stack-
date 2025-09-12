@@ -25,6 +25,7 @@ import {
   updateSkills,
 } from "@/store/slices/resumeSlice";
 import { Certification, Education, Experience, Project } from "@/types/types";
+import SectionProgress from "./SectionProgress";
 
 const ResumeEdit = ({ id }: { id: string }) => {
   const [page, setPage] = useState<number | null>(1);
@@ -158,7 +159,12 @@ const ResumeEdit = ({ id }: { id: string }) => {
     }
   };
 
-  return <div>{currentForm(page)}</div>;
+  return (
+    <div>
+      <SectionProgress page={page} />
+      {currentForm(page)}
+    </div>
+  );
 };
 
 export default ResumeEdit;

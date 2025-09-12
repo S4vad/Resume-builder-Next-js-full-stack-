@@ -11,6 +11,8 @@ import { updateResumeTitle, deleteResume } from "../app/action/action";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { setResumes } from "@/store/slices/userSlice";
+import { calculateResumeCompletion } from "@/lib/completionCalculator";
+import { FancyProgressBar } from "./ProgressBar";
 
 const ResumeHeader = ({
   id,
@@ -27,6 +29,8 @@ const ResumeHeader = ({
 
   const dispatch = useAppDispatch();
   const { currentUser } = useAppSelector((state) => state.user);
+  const resume = useAppSelector((state) => state.resume);
+  const completion = calculateResumeCompletion(resume);
 
   useEffect(() => {
     const fetchResume = async () => {
@@ -59,61 +63,65 @@ const ResumeHeader = ({
   };
 
   return (
-    <div className="w-full h-[80px] bg-gradient-to-r from-fuchsia-50 to-violet-50 rounded-xl p-3 px-10 flex items-center justify-between">
-      <form
-        suppressHydrationWarning
-        className="flex  items-center text-2xl"
-        onSubmit={async (e: React.FormEvent<HTMLFormElement>) => {
-          e.preventDefault();
-          await updateResumeTitle(id, input);
-          setEdit(!edit);
-        }}
-      >
-        {edit && input.length > 0 ? (
-          <input
-            type="text"
-            value={input}
-            name="input"
-            onChange={(e) => setInput(e.target.value)}
-            className="   border-b-2 border-violet-600 outline-none p-1"
-          />
-        ) : (
-          <span className="">{input}</span>
-        )}
-        <button
-          type="submit"
-          className={`${
-            edit ? "bg-violet-600 text-white" : "bg-slate-100"
-          } p-1 rounded-lg ml-5`}
-        >
-          {edit ? <IoMdCheckmark size={25} /> : <LiaEditSolid size={25} />}
-        </button>
-      </form>
+    <>
+      <FancyProgressBar value={completion.percentage} />
 
-      <div className="flex items-center gap-4 ">
-        <div
-          className="flex items-center gap-2 p-2 bg-violet-200 rounded-xl text-violet-600 cursor-pointer hover:bg-violet-300 hover:text-violet-900 transition duration-300"
-          onClick={() => setshowTemplates()}
+      <div className="w-full h-[80px] bg-gradient-to-r from-fuchsia-50 to-violet-50 rounded-xl p-3 px-10 flex items-center justify-between">
+        <form
+          suppressHydrationWarning
+          className="flex  items-center text-2xl"
+          onSubmit={async (e: React.FormEvent<HTMLFormElement>) => {
+            e.preventDefault();
+            await updateResumeTitle(id, input);
+            setEdit(!edit);
+          }}
         >
-          <VscPreview />
-          <span>Templates</span>
-        </div>
-        <div
-          className="flex items-center gap-2 p-2 bg-red-100 text-red-600 rounded-xl cursor-pointer hover:bg-red-300 hover:text-red-900 transition duration-300"
-          onClick={() => handleDeleteResume()}
-        >
-          <RiDeleteBin6Line />
-          <span>Delete</span>
-        </div>
-        <div
-          className="flex items-center gap-2 p-2 bg-emerald-100 rounded-xl text-emerald-600 cursor-pointer hover:bg-emerald-300 hover:text-emerald-900 transition duration-300"
-          onClick={() => setShowPrview()}
-        >
-          <FaRegEye />
-          <span>Preview</span>
+          {edit && input.length > 0 ? (
+            <input
+              type="text"
+              value={input}
+              name="input"
+              onChange={(e) => setInput(e.target.value)}
+              className="   border-b-2 border-violet-600 outline-none p-1"
+            />
+          ) : (
+            <span className="">{input}</span>
+          )}
+          <button
+            type="submit"
+            className={`${
+              edit ? "bg-violet-600 text-white" : "bg-slate-100"
+            } p-1 rounded-lg ml-5`}
+          >
+            {edit ? <IoMdCheckmark size={25} /> : <LiaEditSolid size={25} />}
+          </button>
+        </form>
+
+        <div className="flex items-center gap-4 ">
+          <div
+            className="flex items-center gap-2 p-2 bg-violet-200 rounded-xl text-violet-600 cursor-pointer hover:bg-violet-300 hover:text-violet-900 transition duration-300"
+            onClick={() => setshowTemplates()}
+          >
+            <VscPreview />
+            <span>Templates</span>
+          </div>
+          <div
+            className="flex items-center gap-2 p-2 bg-red-100 text-red-600 rounded-xl cursor-pointer hover:bg-red-300 hover:text-red-900 transition duration-300"
+            onClick={() => handleDeleteResume()}
+          >
+            <RiDeleteBin6Line />
+            <span>Delete</span>
+          </div>
+          <div
+            className="flex items-center gap-2 p-2 bg-emerald-100 rounded-xl text-emerald-600 cursor-pointer hover:bg-emerald-300 hover:text-emerald-900 transition duration-300"
+            onClick={() => setShowPrview()}
+          >
+            <FaRegEye />
+            <span>Preview</span>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
