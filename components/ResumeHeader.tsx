@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { LiaEditSolid } from "react-icons/lia";
 import { IoMdCheckmark } from "react-icons/io";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { updateTitle } from "@/store/slices/resumeSlice";
+import { setIsPreview, updateTitle } from "@/store/slices/resumeSlice";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { VscPreview } from "react-icons/vsc";
 import { FaRegEye } from "react-icons/fa";
@@ -17,11 +17,9 @@ import { FancyProgressBar } from "./ProgressBar";
 const ResumeHeader = ({
   id,
   setshowTemplates,
-  setShowPrview,
 }: {
   id: string;
   setshowTemplates: () => void;
-  setShowPrview: () => void;
 }) => {
   const [input, setInput] = useState<string>("");
   const [edit, setEdit] = useState<boolean>(false);
@@ -52,6 +50,7 @@ const ResumeHeader = ({
       if (currentUser) {
         const response = await deleteResume(id, currentUser.id);
         if (response.success && response.data) {
+          toast.success(`${resume.title} resume deleted successfully !`);
           router.push("/dashboard");
           dispatch(setResumes(response.data));
         }
@@ -64,7 +63,12 @@ const ResumeHeader = ({
 
   return (
     <>
-      <FancyProgressBar value={completion.percentage} />
+      <div className="relative">
+        <FancyProgressBar value={completion.percentage} />
+        <span className="text-violet-500 absolute right-2  text-xs font-semibold -top-0.5">
+          {completion.percentage}%
+        </span>
+      </div>
 
       <div className="w-full h-[80px] bg-gradient-to-r from-fuchsia-50 to-violet-50 rounded-xl p-3 px-10 flex items-center justify-between">
         <form
@@ -114,7 +118,7 @@ const ResumeHeader = ({
           </div>
           <div
             className="flex items-center gap-2 p-2 bg-emerald-100 rounded-xl text-emerald-600 cursor-pointer hover:bg-emerald-300 hover:text-emerald-900 transition duration-300"
-            onClick={() => setShowPrview()}
+            onClick={() => dispatch(setIsPreview(true))}
           >
             <FaRegEye />
             <span>Preview</span>

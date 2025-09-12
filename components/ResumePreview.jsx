@@ -9,7 +9,7 @@ const ResumePreview = () => {
 
   if (resumeData.isLoading) {
     return (
-      <div className="flex items-center justify-center w-full">
+      <div className="flex items-center justify-center w-full h-[calc(100vh-140px)]">
         <ScaleLoader color="#6a39c9" size="35px" />
       </div>
     );

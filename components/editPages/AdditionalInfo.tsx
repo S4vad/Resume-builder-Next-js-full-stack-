@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, Save, ChevronRight, Plus, X } from "lucide-react";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
-import { updateLanguages, updateInterests } from "@/store/slices/resumeSlice";
+import {
+  updateLanguages,
+  updateInterests,
+  setIsPreview,
+} from "@/store/slices/resumeSlice";
 import { updateLanguagesDb, updateInterestsDb } from "@/app/action/formAction";
 import { useRouter } from "next/navigation";
 import { useFormValidation } from "@/hooks/useFormValidation";
@@ -168,7 +172,7 @@ const AdditionalInfoForm = ({ next, previous, id }: Props) => {
               />
               <button
                 onClick={handleAddLanguage}
-                className="flex items-center gap-2 px-6 py-3 text-white bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 rounded-lg transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
+                className="flex items-center gap-2 px-6 py-3 text-white bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 rounded-lg transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105 cursor-pointer"
               >
                 <Plus size={18} />
                 Add Language
@@ -189,7 +193,7 @@ const AdditionalInfoForm = ({ next, previous, id }: Props) => {
                   key={interest}
                   type="button"
                   onClick={() => toggleInterest(interest)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 border-2 ${
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 border-2 cursor-pointer${
                     interests.includes(interest)
                       ? "bg-gradient-to-r from-orange-600 to-red-600 text-white border-transparent shadow-lg transform scale-105"
                       : "bg-white text-gray-700 border-gray-300 hover:border-orange-300 hover:bg-orange-50"
@@ -216,7 +220,7 @@ const AdditionalInfoForm = ({ next, previous, id }: Props) => {
       <div className="flex items-center justify-between pt-6 border-t border-gray-200">
         <button
           onClick={handleBack}
-          className="flex items-center gap-2 px-6 py-3 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors font-medium"
+          className="flex items-center gap-2 px-6 py-3 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors font-medium cursor-pointer"
         >
           <ChevronLeft size={18} />
           Back
@@ -225,15 +229,15 @@ const AdditionalInfoForm = ({ next, previous, id }: Props) => {
         <div className="flex gap-3">
           <button
             onClick={handleSaveAndExit}
-            className="flex items-center gap-2 px-6 py-3 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors font-medium border border-blue-200"
+            className="flex items-center gap-2 px-6 py-3 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors font-medium border border-blue-200 cursor-pointer"
           >
             <Save size={18} />
             Save & Exit
           </button>
 
           <button
-            onClick={handleNext}
-            className="flex items-center gap-2 px-6 py-3 text-white bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors font-medium"
+            onClick={() => dispatch(setIsPreview(true))}
+            className="flex items-center gap-2 px-6 py-3 text-white bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors font-medium cursor-pointer"
           >
             Preview & Download
             <ChevronRight size={18} />

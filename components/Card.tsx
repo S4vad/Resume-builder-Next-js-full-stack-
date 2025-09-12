@@ -22,9 +22,9 @@ interface Props {
   createdAt: string;
   isLoading: boolean;
   updatedAt: string;
-  onSelect: () => void;
   onDelete: () => void;
   completion: number;
+  onSelect: () => void;
   sectionDetails?: {
     [key: string]: {
       completed: number;
@@ -38,10 +38,10 @@ export const ResumeSummaryCard = ({
   title,
   createdAt,
   updatedAt,
-  onSelect,
   onDelete,
   isLoading,
   completion,
+  onSelect,
   sectionDetails,
 }: Props) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -167,7 +167,6 @@ export const ResumeSummaryCard = ({
   const handleEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     e.preventDefault();
-    onSelect();
   };
 
   const completedSections = sections.filter(
@@ -188,7 +187,6 @@ export const ResumeSummaryCard = ({
   return (
     <div
       className="group relative bg-white border border-gray-200 rounded-2xl p-6 cursor-pointer transition-all duration-300 hover:shadow-2xl hover:shadow-gray-200/30 hover:border-gray-300 hover:-translate-y-2 hover:scale-[1.02]"
-      onClick={onSelect}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >

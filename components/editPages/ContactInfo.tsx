@@ -7,6 +7,7 @@ import { updateBasicInfo } from "@/store/slices/resumeSlice";
 import { useRouter } from "next/navigation";
 import { useFormValidation } from "@/hooks/useFormValidation";
 import { ErrorDisplay } from "@/components/ErrorDisplay";
+import { ClipLoader } from "react-spinners";
 
 interface ContactInfoData {
   address: string;
@@ -23,6 +24,8 @@ interface Props {
   id: string;
 }
 const ContactInformationForm = ({ next, previous, id }: Props) => {
+  const [loadingNext, setLoadingNext] = useState(false);
+  const [loadingSave, setLoadingSave] = useState(false);
   const dispatch = useAppDispatch();
   const router = useRouter();
   const resume = useAppSelector((state) => state.resume);
@@ -75,17 +78,24 @@ const ContactInformationForm = ({ next, previous, id }: Props) => {
     if (!validateAndUpdateProgress()) {
       return;
     }
+    setLoadingNext(true);
     const res = await updateContactInfo(id, getUpdateData());
-    if (res.success) next();
+    if (res.success) {
+      setLoadingNext(false);
+      next();
+    }
   };
 
   const handleSaveAndExit = async () => {
     if (!validateAndUpdateProgress()) {
       return;
     }
+    setLoadingSave(true);
     const res = await updateContactInfo(id, getUpdateData());
-    if (res.success) router.push("/dashboard");
-    else console.error("Failed to save resume:", res.error);
+    if (res.success) {
+      setLoadingSave(false);
+      router.push("/dashboard");
+    } else console.error("Failed to save resume:", res.error);
   };
 
   return (
@@ -215,7 +225,7 @@ const ContactInformationForm = ({ next, previous, id }: Props) => {
       <div className="flex items-center justify-between pt-6 border-t border-gray-200">
         <button
           onClick={handleBack}
-          className="flex items-center gap-2 px-6 py-3 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors font-medium"
+          className="flex items-center gap-2 px-6 py-3 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors font-medium cursor-pointer"
         >
           <ChevronLeft size={18} />
           Back
@@ -224,18 +234,38 @@ const ContactInformationForm = ({ next, previous, id }: Props) => {
         <div className="flex gap-3">
           <button
             onClick={handleSaveAndExit}
-            className="flex items-center gap-2 px-6 py-3 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors font-medium border border-blue-200"
+            className="flex items-center gap-2 px-6 py-3 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors font-medium border border-blue-200 cursor-pointer"
           >
-            <Save size={18} />
-            Save & Exit
+            {loadingSave ? (
+              <>
+                {" "}
+                <ClipLoader size={22} />
+                saving..
+              </>
+            ) : (
+              <>
+                <Save size={18} />
+                Save & Exit
+              </>
+            )}
           </button>
 
           <button
             onClick={handleNext}
-            className="flex items-center gap-2 px-6 py-3 text-white bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors font-medium"
+            className="flex items-center gap-2 px-6 py-3 text-white bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors font-medium cursor-pointer"
           >
-            Next
-            <ChevronRight size={18} />
+            {loadingNext ? (
+              <>
+                {" "}
+                <ClipLoader size={22} color="white" />
+                saving..
+              </>
+            ) : (
+              <>
+                Next
+                <ChevronRight size={18} />
+              </>
+            )}
           </button>
         </div>
       </div>

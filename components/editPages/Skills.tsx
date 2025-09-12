@@ -122,7 +122,7 @@ const SkillsForm = ({ next, previous, id }: Props) => {
                 <span>{skill}</span>
                 <button
                   onClick={() => handleRemoveSkill(skill)}
-                  className="text-gray-600 hover:text-red-500 transition-colors"
+                  className="text-gray-600 hover:text-red-500 transition-colors cursor-pointer"
                 >
                   <X size={18} />
                 </button>
@@ -140,7 +140,7 @@ const SkillsForm = ({ next, previous, id }: Props) => {
       <div className="flex items-center justify-between pt-6 border-t border-gray-200">
         <button
           onClick={handleBack}
-          className="flex items-center gap-2 px-6 py-3 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors font-medium"
+          className="flex items-center gap-2 px-6 py-3 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors font-medium cursor-pointer"
         >
           <ChevronLeft size={18} />
           Back
@@ -149,7 +149,7 @@ const SkillsForm = ({ next, previous, id }: Props) => {
         <div className="flex gap-3">
           <button
             onClick={handleSaveAndExit}
-            className="flex items-center gap-2 px-6 py-3 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors font-medium border border-blue-200"
+            className="flex items-center gap-2 px-6 py-3 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors font-medium border border-blue-200 cursor-pointer"
           >
             <Save size={18} />
             Save & Exit
@@ -157,7 +157,7 @@ const SkillsForm = ({ next, previous, id }: Props) => {
 
           <button
             onClick={handleNext}
-            className="flex items-center gap-2 px-6 py-3 text-white bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors font-medium"
+            className="flex items-center gap-2 px-6 py-3 text-white bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors font-medium cursor-pointer"
           >
             Next
             <ChevronRight size={18} />

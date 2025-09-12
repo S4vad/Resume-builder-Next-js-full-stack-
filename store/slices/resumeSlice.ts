@@ -7,7 +7,11 @@ import {
 } from "@/types/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-export const initialState: ResumeState = {
+export type ResumeSliceState = ResumeState & {
+  isPreview: boolean;
+};
+
+export const initialState: ResumeSliceState = {
   id: "",
   userId: "",
   title: "",
@@ -29,6 +33,7 @@ export const initialState: ResumeState = {
   projects: [],
   certifications: [],
   progression: 0,
+  isPreview: false,
 };
 
 const resumeSlice = createSlice({
@@ -233,6 +238,9 @@ const resumeSlice = createSlice({
     setError: (state, action: PayloadAction<string | "">) => {
       state.error = action.payload;
     },
+    setIsPreview: (state, action: PayloadAction<boolean>) => {
+      state.isPreview = action.payload;
+    },
   },
 });
 
@@ -274,6 +282,7 @@ export const {
   clearProjects,
   clearCertifications,
   setExperiencesRedux,
+  setIsPreview,
 } = resumeSlice.actions;
 
 export default resumeSlice.reducer;

@@ -22,9 +22,8 @@ export const calculateResumeCompletion = (
     [key: string]: { completed: number; total: number; percentage: number };
   } = {};
 
-  // Profile Info (Personal Information)
   let profileCompleted = 0;
-  let profileTotal = 3;
+  const profileTotal = 3;
 
   if (resume.full_name?.trim()) profileCompleted++;
   if (resume.designation?.trim()) profileCompleted++;
@@ -39,9 +38,8 @@ export const calculateResumeCompletion = (
   completedFields += profileCompleted;
   totalFields += profileTotal;
 
-  // Contact Info
   let contactCompleted = 0;
-  let contactTotal = 6;
+  const contactTotal = 6;
 
   if (resume.email?.trim()) contactCompleted++;
   if (resume.phone?.trim()) contactCompleted++;
@@ -59,7 +57,6 @@ export const calculateResumeCompletion = (
   completedFields += contactCompleted;
   totalFields += contactTotal;
 
-  // Work Experience
   let experienceCompleted = 0;
   let experienceTotal;
   if (resume.experience) {
@@ -86,7 +83,6 @@ export const calculateResumeCompletion = (
   completedFields += experienceCompleted;
   totalFields += experienceTotal;
 
-  // Education
   let educationCompleted = 0;
   let educationTotal;
   if (resume.educations) {
@@ -98,10 +94,9 @@ export const calculateResumeCompletion = (
       if (edu.startDate) educationCompleted++;
       if (edu.endDate) educationCompleted++;
     });
-  }
-
-  if (educationTotal === 0) {
-    educationTotal = 4; // At least one education required
+    if (educationTotal === 0) {
+      educationTotal = 4; // At least one education required
+    }
   }
 
   sectionDetails["education"] = {
@@ -113,7 +108,6 @@ export const calculateResumeCompletion = (
   completedFields += educationCompleted;
   totalFields += educationTotal;
 
-  // Skills
   let skillsCompleted = 0;
   let skillsTotal = resume.skills.length;
 
@@ -134,19 +128,20 @@ export const calculateResumeCompletion = (
   completedFields += skillsCompleted;
   totalFields += skillsTotal;
 
-  // Projects (Mandatory now)
   let projectsCompleted = 0;
-  let projectsTotal = resume.projects.length * 4;
+  let projectsTotal;
+  if (resume.projects) {
+    projectsTotal = resume.projects.length * 4;
+    resume.projects.forEach((project) => {
+      if (project.title?.trim()) projectsCompleted++;
+      if (project.description?.trim()) projectsCompleted++;
+      if (project.github?.trim()) projectsCompleted++;
+      if (project.live?.trim()) projectsCompleted++;
+    });
 
-  resume.projects.forEach((project) => {
-    if (project.title?.trim()) projectsCompleted++;
-    if (project.description?.trim()) projectsCompleted++;
-    if (project.github?.trim()) projectsCompleted++;
-    if (project.live?.trim()) projectsCompleted++;
-  });
-
-  if (projectsTotal === 0) {
-    projectsTotal = 4; // At least one project required
+    if (projectsTotal === 0) {
+      projectsTotal = 4; // At least one project required
+    }
   }
 
   sectionDetails["projects"] = {
@@ -158,18 +153,19 @@ export const calculateResumeCompletion = (
   completedFields += projectsCompleted;
   totalFields += projectsTotal;
 
-  // Certifications (Mandatory now)
   let certificationsCompleted = 0;
-  let certificationsTotal = resume.certifications.length * 3;
+  let certificationsTotal;
+  if (resume.certifications) {
+    certificationsTotal = resume.certifications.length * 3;
+    resume.certifications.forEach((cert) => {
+      if (cert.title?.trim()) certificationsCompleted++;
+      if (cert.year?.trim()) certificationsCompleted++;
+      if (cert.link?.trim()) certificationsCompleted++;
+    });
 
-  resume.certifications.forEach((cert) => {
-    if (cert.title?.trim()) certificationsCompleted++;
-    if (cert.year?.trim()) certificationsCompleted++;
-    if (cert.link?.trim()) certificationsCompleted++;
-  });
-
-  if (certificationsTotal === 0) {
-    certificationsTotal = 3; // At least one certification required
+    if (certificationsTotal === 0) {
+      certificationsTotal = 3; // At least one certification required
+    }
   }
 
   sectionDetails["certifications"] = {
@@ -185,14 +181,17 @@ export const calculateResumeCompletion = (
 
   // Languages
   let languagesCompleted = 0;
-  let languagesTotal = resume.languages.length;
+  let languagesTotal;
+  if (resume.languages) {
+    languagesTotal = resume.languages.length;
 
-  resume.languages.forEach((lang) => {
-    if (lang?.trim()) languagesCompleted++;
-  });
+    resume.languages.forEach((lang) => {
+      if (lang?.trim()) languagesCompleted++;
+    });
 
-  if (languagesTotal === 0) {
-    languagesTotal = 1;
+    if (languagesTotal === 0) {
+      languagesTotal = 1;
+    }
   }
 
   // Additional (Languages + Interests combined)

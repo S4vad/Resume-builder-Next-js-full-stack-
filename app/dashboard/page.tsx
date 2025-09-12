@@ -5,7 +5,7 @@ import { RiFileUploadLine } from "react-icons/ri";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useRouter } from "next/navigation";
 import Modal from "@/components/Modal";
-import { createTitle, deleteResume } from "../action/action";
+import { createTitle, deleteResume, getUserResume } from "../action/action";
 import { addResume, setResumes } from "@/store/slices/userSlice";
 import mapPrismaResumeToState from "@/lib/map";
 import { ClipLoader } from "react-spinners";
@@ -22,9 +22,7 @@ const Dashboard = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
 
-  const { resumes, currentUser, isLoading } = useAppSelector(
-    (state) => state.user
-  );
+  const { resumes, currentUser } = useAppSelector((state) => state.user);
 
   const Mappedresumes = resumes.map(mapPrismaResumeToState);
 
@@ -37,28 +35,57 @@ const Dashboard = () => {
 
     if (response.success) {
       toast.success(response.message || "Resume deleted successfully");
+
       dispatch(setResumes(response.data!));
     }
   };
 
   const handleResumeCreated = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!title.trim()) {
+      toast.error("Please enter a resume title");
+      return;
+    }
     setLoading(true);
     try {
       const res = await createTitle(currentUser!.id, title);
       if (res.success) {
-        dispatch(addResume(mapPrismaResumeToState(res.data)));
+        toast.success("Resume created successfully!");
         setOpen(false);
+        setTitle("");
         router.push(`/resume/${res.data!.id}`);
+
+        setTimeout(() => {
+          dispatch(addResume(mapPrismaResumeToState(res.data!)));
+          setLoading(false);
+        }, 100);
+      } else {
+        toast.error("Failed to create resume");
+        setLoading(false);
       }
     } catch (error) {
       console.error(error);
-    } finally {
       setLoading(false);
     }
   };
 
-  if (isLoading || loading) {
+  const fetchResumes = async () => {
+    if (!currentUser) return;
+    const res = await getUserResume(currentUser.id);
+    if (res.success) {
+      const mapped = res.data!.map(mapPrismaResumeToState);
+      dispatch(setResumes(mapped));
+    }
+  };
+
+  useEffect(() => {
+    if (currentUser) {
+      fetchResumes();
+    }
+  }, [currentUser]);
+
+  if (loading) {
     return (
       <div className="flex items-center justify-center  w-full mt-50">
         <ClipLoader color="#6a39c9" size="45px" />
@@ -70,7 +97,7 @@ const Dashboard = () => {
       <div className="flex justify-between p-8 pt-10">
         <div className="text-gray-800 ">
           <h1 className="font-semibold text-xl">My Resumes</h1>
-          {resumes.length > 0 ? (
+          {resumes.length > 0 && currentUser ? (
             <p>Created {resumes.length} resumes</p>
           ) : (
             <p>Create your First Resume</p>
@@ -83,7 +110,7 @@ const Dashboard = () => {
           Create New <RiFileUploadLine />
         </Button>
       </div>
-      {!isLoading && resumes?.length > 0 ? (
+      {resumes?.length > 0 && currentUser ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-8">
           {Mappedresumes.map((resume) => {
             const completionData = calculateResumeCompletion(resume);
@@ -103,7 +130,10 @@ const Dashboard = () => {
                   updatedAt={resume.updatedAt || ""}
                   completion={completion}
                   sectionDetails={completionData.sectionDetails}
-                  onSelect={() => console.log("select")}
+                  onSelect={() => {
+                    setCardLoading(resume.id);
+                    router.push(`/resume/${resume.id}`);
+                  }}
                   onDelete={() => handleDeleteResume(resume.id)}
                   isLoading={cardLoading === resume.id}
                 />
@@ -137,8 +167,8 @@ const Dashboard = () => {
         header="Create New Resume"
       >
         <form
-          onSubmit={(e) => handleResumeCreated(e)}
-          className="space-y-4 bg-white p-8 rounded-xl "
+          onSubmit={handleResumeCreated}
+          className="space-y-8 bg-white p-8 rounded-xl "
         >
           <p className=" text-gray-500">
             Give your resume a title to get started. You can customize
@@ -161,8 +191,16 @@ const Dashboard = () => {
           <button
             type="submit"
             className="w-full py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-semibold rounded-lg hover:opacity-90 transition"
+            disabled={loading || !title.trim()}
           >
-            Create Resume
+            {loading ? (
+              <div className="flex items-center justify-center gap-2">
+                <ClipLoader color="#ffffff" size="16px" />
+                Creating...
+              </div>
+            ) : (
+              "Create Resume"
+            )}
           </button>
         </form>
       </Modal>

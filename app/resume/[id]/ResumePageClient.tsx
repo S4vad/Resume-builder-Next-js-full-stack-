@@ -8,7 +8,11 @@ import Link from "next/link";
 import React, { useCallback, useState } from "react";
 import Image from "next/image";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { loadResume, setTemplateName } from "@/store/slices/resumeSlice";
+import {
+  loadResume,
+  setIsPreview,
+  setTemplateName,
+} from "@/store/slices/resumeSlice";
 import { ResumeState } from "@/types/types";
 import { addTemplateDb } from "@/app/action/formAction";
 const templates = [
@@ -27,13 +31,13 @@ import { ClipLoader } from "react-spinners";
 
 export default function ResumePageClient({ id }: { id: string }) {
   const [showTemplates, setShowTemplates] = useState<boolean>(false);
-  const [showPreview, setShowPreview] = useState<boolean>(false);
   const [selectedImage, setSelectedImage] = useState(templates[0]);
   const [isDownloading, setIsDownloading] = useState(false);
   const [template, setTemplate] = useState<TemplateName>(
     useAppSelector((state) => state.resume.templateName) as TemplateName
   );
   const resume = useAppSelector((state) => state.resume);
+  const { isPreview } = useAppSelector((state) => state.resume);
   const previewRef = useRef<HTMLDivElement>(null);
 
   const dispatch = useAppDispatch();
@@ -81,7 +85,6 @@ export default function ResumePageClient({ id }: { id: string }) {
           <ResumeHeader
             id={id}
             setshowTemplates={() => setShowTemplates(true)}
-            setShowPrview={() => setShowPreview(true)}
           />
         </div>
         <div className="grid grid-cols-2 gap-4">
@@ -147,20 +150,24 @@ export default function ResumePageClient({ id }: { id: string }) {
           </div>
         </Modal>
       )}
-      {showPreview && (
+      {isPreview && (
         <Modal
           header={resume.title}
-          isOpen={showPreview}
-          onClose={() => setShowPreview(false)}
+          isOpen={isPreview}
+          onClose={() => dispatch(setIsPreview(false))}
           className=" w-[90%] md:max-w-[60%] max-h-[95%] overflow-y-scroll h-screen relative "
         >
           <div className="flex flex-col gap-3 h-[90%]">
             <div className="w-full h-[5%] flex justify-end">
-              <Button onClick={handleDownloadPdf} className="rounded-xl text-white text-[15px]">
+              <Button
+                onClick={handleDownloadPdf}
+                className="rounded-xl text-white text-[15px]"
+              >
                 {isDownloading ? (
                   <>
-                  <ClipLoader size={28} color="white" className="mr-2 "  />
-                  Generating...</>
+                    <ClipLoader size={28} color="white" className="mr-2 " />
+                    Generating...
+                  </>
                 ) : (
                   <>
                     <Download className="mr-2" />

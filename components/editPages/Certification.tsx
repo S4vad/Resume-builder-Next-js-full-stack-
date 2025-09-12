@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { ChevronLeft, Save, ChevronRight, Plus, X } from "lucide-react";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import {
@@ -11,6 +11,7 @@ import { addCertificationsDb } from "@/app/action/formAction";
 import { useRouter } from "next/navigation";
 import { useFormValidation } from "@/hooks/useFormValidation";
 import { ErrorDisplay } from "@/components/ErrorDisplay";
+import { ClipLoader } from "react-spinners";
 
 interface Props {
   next: () => void;
@@ -19,6 +20,8 @@ interface Props {
 }
 
 const CertificationsForm = ({ next, previous, id }: Props) => {
+  const [loadingNext, setLoadingNext] = useState(false);
+  const [loadingSave, setLoadingSave] = useState(false);
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { certifications } = useAppSelector((state) => state.resume);
@@ -62,14 +65,18 @@ const CertificationsForm = ({ next, previous, id }: Props) => {
     if (!validateAndUpdateProgress()) {
       return;
     }
+    setLoadingNext(true);
     await saveCertifications();
+    setLoadingNext(false);
     next();
   };
   const handleSaveAndExit = async () => {
     if (!validateAndUpdateProgress()) {
       return;
     }
+    setLoadingSave(true);
     await saveCertifications();
+    setLoadingSave(false);
     router.push("/dashboard");
   };
 
@@ -166,7 +173,7 @@ const CertificationsForm = ({ next, previous, id }: Props) => {
 
         <button
           onClick={addCertificationEntry}
-          className="flex items-center gap-2 px-6 py-3 text-white bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 rounded-lg transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
+          className="flex items-center gap-2 px-6 py-3 text-white bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 rounded-lg transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105 cursor-pointer"
         >
           <Plus size={18} />
           Add Certification
@@ -177,7 +184,7 @@ const CertificationsForm = ({ next, previous, id }: Props) => {
       <div className="flex items-center justify-between pt-6 border-t border-gray-200 mt-6">
         <button
           onClick={handleBack}
-          className="flex items-center gap-2 px-6 py-3 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors font-medium"
+          className="flex items-center gap-2 px-6 py-3 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors font-medium cursor-pointer"
         >
           <ChevronLeft size={18} />
           Back
@@ -186,18 +193,36 @@ const CertificationsForm = ({ next, previous, id }: Props) => {
         <div className="flex gap-3">
           <button
             onClick={handleSaveAndExit}
-            className="flex items-center gap-2 px-6 py-3 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors font-medium border border-blue-200"
+            className="flex items-center gap-2 px-6 py-3 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors font-medium border border-blue-200 cursor-pointer"
           >
-            <Save size={18} />
-            Save & Exit
+            {loadingSave ? (
+              <>
+                <ClipLoader size={22} />
+                saving..
+              </>
+            ) : (
+              <>
+                <Save size={18} />
+                Save & Exit
+              </>
+            )}
           </button>
 
           <button
             onClick={handleNext}
-            className="flex items-center gap-2 px-6 py-3 text-white bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors font-medium"
+            className="flex items-center gap-2 px-6 py-3 text-white bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors font-medium cursor-pointer"
           >
-            Next
-            <ChevronRight size={18} />
+            {loadingNext ? (
+              <>
+                <ClipLoader size={22} color="white" />
+                saving..
+              </>
+            ) : (
+              <>
+                Next
+                <ChevronRight size={18} />
+              </>
+            )}
           </button>
         </div>
       </div>
