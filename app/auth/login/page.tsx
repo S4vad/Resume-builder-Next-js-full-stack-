@@ -36,7 +36,7 @@ const Login = () => {
       if (result?.error) {
         setError("Invalid email or password");
       } else if (result?.ok) {
-        router.push("/"); 
+        router.push("/dashboard");
       }
     } catch (error) {
       setError("An error occurred during login");
@@ -50,7 +50,7 @@ const Login = () => {
     setIsLoading(true);
     try {
       await signIn("google", {
-        callbackUrl: "/",
+        callbackUrl: "/dashboard",
       });
     } catch (error) {
       console.error("Google sign in error:", error);
@@ -64,7 +64,7 @@ const Login = () => {
     <div className="w-full h-screen flex justify-center items-center mx-auto p-6 sm:p-0">
       <div className="flex w-full max-w-md flex-col gap-4 border border-green-600 p-8 rounded-xl">
         <p className="text-center text-gray-500">Login to your account</p>
-        
+
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-2 rounded">
             {error}
@@ -82,7 +82,7 @@ const Login = () => {
             disabled={isLoading}
             className="border border-gray-300 rounded px-4 py-3 text-lg focus:outline-none focus:border-blue-400 disabled:opacity-50"
           />
-          
+
           <div className="relative w-full">
             <input
               onChange={handleChange}
@@ -111,7 +111,7 @@ const Login = () => {
             {isLoading ? "Logging in..." : "Login"}
           </button>
         </form>
-        
+
         <p className="text-center">
           Don&apos;t have an account?
           <Link href="/auth/signup" className="underline text-red-400 ml-2">

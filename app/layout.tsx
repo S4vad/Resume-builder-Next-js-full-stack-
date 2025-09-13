@@ -4,7 +4,15 @@ import ReduxProvider from "@/components/ReduxProvider";
 import SessionSync from "@/components/SessionSync";
 import Navbar from "@/components/Nav";
 import { Toaster } from "react-hot-toast";
+import { Metadata } from "next";
 
+export const metadata: Metadata = {
+  title: "ElevateCV",
+  description: "This is my resume builder site",
+  icons: {
+    icon: "/logo.png",
+  },
+};
 export default function RootLayout({
   children,
 }: Readonly<{

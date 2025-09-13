@@ -20,7 +20,7 @@ export const FancyProgressBar: React.FC<ProgressProps> = ({ value }) => {
     <div className="relative w-full h-3 bg-gray-200 rounded-full overflow-hidden">
       {/* Progress fill */}
       <div
-        className="h-full bg-gradient-to-r from-pink-500 to-purple-500 rounded-full transition-all duration-500"
+        className="h-full bg-gradient-to-r from-violet-600 to-purple-600 rounded-full transition-all duration-500"
         style={{ width: `${value}%` }}
       />
 

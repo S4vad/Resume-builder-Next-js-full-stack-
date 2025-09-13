@@ -46,7 +46,7 @@ const SignUp = () => {
         if (signInResult?.error) {
           setError("Account created but login failed. Please try logging in manually.");
         } else if (signInResult?.ok) {
-          router.push("/");
+          router.push("/dashboard");
         }
       } else {
         setError(data.error || "Signup failed. User may already exist.");
@@ -63,7 +63,7 @@ const SignUp = () => {
     setIsLoading(true);
     try {
       await signIn("google", {
-        callbackUrl: "/",
+        callbackUrl: "/dashboard",
       });
     } catch (error) {
       console.error("Google sign up error:", error);

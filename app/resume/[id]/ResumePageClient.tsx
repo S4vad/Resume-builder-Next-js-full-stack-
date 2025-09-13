@@ -15,11 +15,7 @@ import {
 } from "@/store/slices/resumeSlice";
 import { ResumeState } from "@/types/types";
 import { addTemplateDb } from "@/app/action/formAction";
-const templates = [
-  "/templates/Resume1.png",
-  "/templates/Resume2.png",
-  "/templates/Resume3.png",
-];
+const templates = ["/Resume1.png", "/Resume2.png", "/Resume3.png"];
 import { TemplateName } from "@prisma/client";
 import Button from "@/components/Button";
 import { jsPDF } from "jspdf";
@@ -136,7 +132,6 @@ export default function ResumePageClient({ id }: { id: string }) {
               alt="preview image"
               width={500}
               height={600}
-              unoptimized
               className="rounded-md "
             />
           </div>
