@@ -9,17 +9,15 @@ import React, { useCallback, useState } from "react";
 import Image from "next/image";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
+  initialState,
   loadResume,
   setIsPreview,
   setTemplateName,
 } from "@/store/slices/resumeSlice";
-import { ResumeState } from "@/types/types";
 import { addTemplateDb } from "@/app/action/formAction";
 const templates = ["/Resume1.png", "/Resume2.png", "/Resume3.png"];
 import { TemplateName } from "@prisma/client";
 import Button from "@/components/Button";
-import { jsPDF } from "jspdf";
-import html2canvas from "html2canvas";
 import { useRef } from "react";
 import toast from "react-hot-toast";
 import { downloadResumePdf } from "@/lib/downloadPdf";
@@ -68,7 +66,7 @@ export default function ResumePageClient({ id }: { id: string }) {
       <Link
         href="/dashboard"
         className="group text-gray-700 font-medium text-xs absolute left-8 top-30 flex items-center gap-1 transition hover:-translate-x-1"
-        onClick={() => dispatch(loadResume({} as ResumeState))}
+        onClick={() => dispatch(loadResume(initialState))}
       >
         <CircleArrowLeft className="text-gray-600 size-3 transition group-hover:text-blue-700" />
         <span className="underline transition group-hover:text-blue-700">
@@ -83,9 +81,9 @@ export default function ResumePageClient({ id }: { id: string }) {
             setshowTemplates={() => setShowTemplates(true)}
           />
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid md:grid-cols-2 gap-4">
           <ResumeEdit id={id} />
-          <div className="shadow-xl rounded-lg  ">
+          <div className="shadow-xl rounded-lg   ">
             <ResumePreview />
           </div>
         </div>

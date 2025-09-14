@@ -6,7 +6,7 @@ import {
   updateEducation,
   removeEducation,
 } from "@/store/slices/resumeSlice";
-import { Education } from "@/types/types";
+import { Education } from "@/store/types/types";
 import { addEducationsDb } from "@/app/action/formAction";
 import { useRouter } from "next/navigation";
 import { useFormValidation } from "@/hooks/useFormValidation";

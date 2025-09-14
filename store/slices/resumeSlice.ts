@@ -4,7 +4,7 @@ import {
   Education,
   Certification,
   Project,
-} from "@/types/types";
+} from "@/store/types/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export type ResumeSliceState = ResumeState & {

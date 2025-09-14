@@ -9,16 +9,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   secret: process.env.AUTH_SECRET,
   adapter: PrismaAdapter(prisma),
   session: {
-    strategy: "jwt", 
+    strategy: "jwt",
   },
   pages: {
-    signIn: "/auth/login", 
+    signIn: "/auth/login",
   },
-  
+
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      allowDangerousEmailAccountLinking: true, // This fixes the OAuthAccountNotLinked error
     }),
 
     Credentials({
@@ -30,7 +31,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          return null; 
+          return null;
         }
 
         try {
@@ -39,14 +40,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           });
 
           if (!user || !user.password) {
-            return null; 
+            return null;
           }
-          const isValid = await compare(credentials.password as string, user.password);
-          
-          if (!isValid) {
-            return null; 
-          }
+          const isValid = await compare(
+            credentials.password as string,
+            user.password
+          );
 
+          if (!isValid) {
+            return null;
+          }
 
           return {
             id: user.id,
@@ -56,22 +59,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           };
         } catch (error) {
           console.error("Authentication error:", error);
-          return null; 
+          return null;
         }
       },
     }),
   ],
-  
+
   // Callbacks to customize JWT and session behavior
   callbacks: {
-   
     async jwt({ token, user, account }) {
       if (user) {
         token.id = user.id;
       }
       return token;
     },
-    
+
     // Session callback runs whenever a session is checked
     async session({ session, token }) {
       if (token && session.user) {

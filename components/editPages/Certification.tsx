@@ -6,7 +6,7 @@ import {
   updateCertification,
   removeCertification,
 } from "@/store/slices/resumeSlice";
-import { Certification } from "@/types/types";
+import { Certification } from "@/store/types/types";
 import { addCertificationsDb } from "@/app/action/formAction";
 import { useRouter } from "next/navigation";
 import { useFormValidation } from "@/hooks/useFormValidation";

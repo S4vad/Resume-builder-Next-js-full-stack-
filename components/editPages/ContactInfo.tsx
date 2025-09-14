@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { ChevronLeft, Save, ChevronRight } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { updateContactInfo } from "@/app/action/formAction";
-import { ResumeState } from "@/types/types";
+import { ResumeState } from "@/store/types/types";
 import { updateBasicInfo } from "@/store/slices/resumeSlice";
 import { useRouter } from "next/navigation";
 import { useFormValidation } from "@/hooks/useFormValidation";

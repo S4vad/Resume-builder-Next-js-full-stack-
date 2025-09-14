@@ -1,6 +1,6 @@
 "use client";
 import Button from "@/components/Button";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { RiFileUploadLine } from "react-icons/ri";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useRouter } from "next/navigation";
@@ -12,17 +12,57 @@ import { ClipLoader } from "react-spinners";
 import { ResumeSummaryCard } from "@/components/Card";
 import toast from "react-hot-toast";
 import { calculateResumeCompletion } from "@/lib/completionCalculator";
+import { setError, setLoading } from "@/store/slices/resumeSlice";
 
 const Dashboard = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [title, setTitle] = useState<string>("");
-  const [loading, setLoading] = useState(false);
+  const [creating, setCreating] = useState(false);
+    const [initialFetchDone, setInitialFetchDone] = useState(false);
+
   const [cardLoading, setCardLoading] = useState<string | null>(null);
 
   const dispatch = useAppDispatch();
   const router = useRouter();
 
-  const { resumes, currentUser } = useAppSelector((state) => state.user);
+  const { resumes, currentUser, isLoading, error } = useAppSelector(
+    (state) => state.user
+  );
+
+  const fetchUserResumes = useCallback(async () => {
+     if (!currentUser?.id) {
+      setInitialFetchDone(true);
+      return;
+    }
+
+
+    try {
+      dispatch(setLoading(true));
+      dispatch(setError(""));
+
+      const response = await getUserResume(currentUser.id);
+
+      if (response.success && response.data) {
+        const mappedResumes = response.data.map(mapPrismaResumeToState);
+        dispatch(setResumes(mappedResumes));
+      } else {
+        dispatch(setError(response.error || "Failed to fetch resumes"));
+        toast.error(response.error || "Failed to fetch resumes");
+      }
+    } catch (error) {
+      const errorMessage = "An error occurred while fetching resumes";
+      dispatch(setError(errorMessage));
+      toast.error(errorMessage);
+      console.error("Error fetching resumes:", error);
+    } finally {
+      dispatch(setLoading(false));
+      setInitialFetchDone(true);
+    }
+  }, [currentUser?.id, dispatch]);
+
+  useEffect(() => {
+    fetchUserResumes();
+  }, [fetchUserResumes]);
 
   const Mappedresumes = resumes.map(mapPrismaResumeToState);
 
@@ -47,7 +87,7 @@ const Dashboard = () => {
       toast.error("Please enter a resume title");
       return;
     }
-    setLoading(true);
+    setCreating(true);
     try {
       const res = await createTitle(currentUser!.id, title);
       if (res.success) {
@@ -58,37 +98,36 @@ const Dashboard = () => {
 
         setTimeout(() => {
           dispatch(addResume(mapPrismaResumeToState(res.data!)));
-          setLoading(false);
+          setCreating(false);
         }, 100);
       } else {
         toast.error("Failed to create resume");
-        setLoading(false);
+        setCreating(false);
       }
     } catch (error) {
       console.error(error);
-      setLoading(false);
+      setCreating(false);
     }
   };
 
-  const fetchResumes = async () => {
-    if (!currentUser) return;
-    const res = await getUserResume(currentUser.id);
-    if (res.success) {
-      const mapped = res.data!.map(mapPrismaResumeToState);
-      dispatch(setResumes(mapped));
-    }
-  };
-
-  useEffect(() => {
-    if (currentUser) {
-      fetchResumes();
-    }
-  }, [currentUser]);
-
-  if (loading) {
+  if (!initialFetchDone || isLoading) {
     return (
       <div className="flex items-center justify-center  w-full mt-50">
         <ClipLoader color="#6a39c9" size="45px" />
+      </div>
+    );
+  }
+
+  if (error && resumes.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center w-full min-h-[400px] text-red-600">
+        <p className="mb-4">Error: {error}</p>
+        <Button
+          onClick={fetchUserResumes}
+          className="bg-red-600 hover:bg-red-700"
+        >
+          Retry
+        </Button>
       </div>
     );
   }
@@ -110,7 +149,7 @@ const Dashboard = () => {
           Create New <RiFileUploadLine />
         </Button>
       </div>
-      {resumes?.length > 0 && currentUser ? (
+      {resumes?.length > 0  ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-8">
           {Mappedresumes.map((resume) => {
             const completionData = calculateResumeCompletion(resume);
@@ -130,10 +169,6 @@ const Dashboard = () => {
                   updatedAt={resume.updatedAt || ""}
                   completion={completion}
                   sectionDetails={completionData.sectionDetails}
-                  onSelect={() => {
-                    setCardLoading(resume.id);
-                    router.push(`/resume/${resume.id}`);
-                  }}
                   onDelete={() => handleDeleteResume(resume.id)}
                   isLoading={cardLoading === resume.id}
                 />
@@ -143,7 +178,7 @@ const Dashboard = () => {
         </div>
       ) : (
         <div className="flex items-center flex-col gap-3   text-violet-800   mt-20  ">
-          <div className="rounded-full p-2 bg-fuchsia-50 border-1 border-violet-500">
+          <div className="rounded-full p-2 bg-fuchsia-50 border border-violet-500">
             <RiFileUploadLine className="size-13 text-violet-700" />
           </div>
 
@@ -181,6 +216,7 @@ const Dashboard = () => {
               type="text"
               name="title"
               value={title}
+              disabled={creating}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. Savad – Software Engineer"
               className="w-full mt-1 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
@@ -191,9 +227,9 @@ const Dashboard = () => {
           <button
             type="submit"
             className="w-full py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-semibold rounded-lg hover:opacity-90 transition"
-            disabled={loading || !title.trim()}
+            disabled={creating || !title.trim()}
           >
-            {loading ? (
+            {creating ? (
               <div className="flex items-center justify-center gap-2">
                 <ClipLoader color="#ffffff" size="16px" />
                 Creating...

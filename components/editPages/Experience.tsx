@@ -6,7 +6,7 @@ import {
   updateExperience,
   removeExperience,
 } from "@/store/slices/resumeSlice";
-import { Experience } from "@/types/types";
+import { Experience } from "@/store/types/types";
 import { addExperiencesDb } from "@/app/action/formAction";
 import { useRouter } from "next/navigation";
 import { useFormValidation } from "@/hooks/useFormValidation";

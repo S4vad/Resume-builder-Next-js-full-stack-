@@ -24,7 +24,12 @@ import {
   updateLanguages,
   updateSkills,
 } from "@/store/slices/resumeSlice";
-import { Certification, Education, Experience, Project } from "@/types/types";
+import {
+  Certification,
+  Education,
+  Experience,
+  Project,
+} from "@/store/types/types";
 import SectionProgress from "./SectionProgress";
 
 const ResumeEdit = ({ id }: { id: string }) => {

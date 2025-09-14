@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ResumeState } from "@/types/types";
+import { ResumeState } from "@/store/types/types";
 
 export interface User {
   id: string;

@@ -6,7 +6,7 @@ import {
   updateProject,
   removeProject,
 } from "@/store/slices/resumeSlice";
-import { Project } from "@/types/types";
+import { Project } from "@/store/types/types";
 import { addProjectsDb } from "@/app/action/formAction";
 import { useRouter } from "next/navigation";
 import { useFormValidation } from "@/hooks/useFormValidation";

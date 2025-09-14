@@ -92,6 +92,7 @@ const ResumeHeader = ({
             <span className="">{input}</span>
           )}
           <button
+            suppressHydrationWarning
             type="submit"
             className={`${
               edit ? "bg-violet-600 text-white" : "bg-slate-100"

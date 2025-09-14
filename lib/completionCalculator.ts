@@ -1,4 +1,4 @@
-import { ResumeState } from "@/types/types";
+import { ResumeState } from "@/store/types/types";
 
 export interface CompletionDetails {
   percentage: number;

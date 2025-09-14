@@ -24,7 +24,6 @@ interface Props {
   updatedAt: string;
   onDelete: () => void;
   completion: number;
-  onSelect: () => void;
   sectionDetails?: {
     [key: string]: {
       completed: number;
@@ -41,7 +40,6 @@ export const ResumeSummaryCard = ({
   onDelete,
   isLoading,
   completion,
-  onSelect,
   sectionDetails,
 }: Props) => {
   const [isHovered, setIsHovered] = useState(false);
