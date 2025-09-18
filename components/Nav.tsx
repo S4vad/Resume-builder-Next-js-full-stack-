@@ -66,7 +66,7 @@ const Navbar = () => {
           </button>
         </div>
       )}
-      {status === "loading" && (
+      {(status === "loading" && pathname !== "/") && (
         <div>
           <ClipLoader size={28} color="blue" />
         </div>

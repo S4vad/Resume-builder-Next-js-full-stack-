@@ -1,4 +1,4 @@
-import { ResumeState } from "@/store/types/types";
+import { ResumeState } from "@/types/types";
 
 export interface CompletionDetails {
   percentage: number;
@@ -196,7 +196,7 @@ export const calculateResumeCompletion = (
 
   // Additional (Languages + Interests combined)
   let additionalCompleted = 0;
-  let additionalTotal = 2; // 1 language + 1 interest → 2 total fields
+  const additionalTotal = 2; // 1 language + 1 interest → 2 total fields
 
   const hasLanguage = resume.languages.some((lang) => lang?.trim() !== "");
   const hasInterest = resume.intrests.some(
