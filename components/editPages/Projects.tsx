@@ -125,25 +125,25 @@ const ProjectsForm = ({ next, previous, id }: Props) => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-sm">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-6">Projects</h2>
+    <div className="w-full max-w-2xl mx-auto bg-white p-4 sm:p-6 lg:p-8 rounded-lg shadow-sm">
+      <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4 sm:mb-6">Projects</h2>
 
-      <div className="space-y-8">
+      <div className="space-y-6 sm:space-y-8">
         {projects.map((project, index) => (
           <div
             key={index}
-            className="relative border border-gray-200 rounded-lg p-6 bg-gray-50"
+            className="relative border border-gray-200 rounded-lg p-4 sm:p-6 bg-gray-50"
           >
             {projects.length > 1 && (
               <button
                 onClick={() => removeProjectEntry(index)}
-                className="absolute top-4 right-4 text-gray-400 hover:text-red-500 transition-colors"
+                className="absolute top-3 right-3 sm:top-4 sm:right-4 text-gray-400 hover:text-red-500 transition-colors"
               >
-                <X size={20} />
+                <X size={18} className="sm:w-5 sm:h-5" />
               </button>
             )}
 
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Project Title
@@ -154,7 +154,7 @@ const ProjectsForm = ({ next, previous, id }: Props) => {
                   onChange={(e) =>
                     handleInputChange(index, "title", e.target.value)
                   }
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors bg-white"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors bg-white text-sm sm:text-base"
                   placeholder="Enter project title"
                 />
               </div>
@@ -168,8 +168,8 @@ const ProjectsForm = ({ next, previous, id }: Props) => {
                   onChange={(e) =>
                     handleInputChange(index, "description", e.target.value)
                   }
-                  rows={4}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors resize-none bg-white"
+                  rows={3}
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors resize-none bg-white text-sm sm:text-base sm:rows-4"
                   placeholder="Describe your project"
                 />
               </div>
@@ -184,12 +184,12 @@ const ProjectsForm = ({ next, previous, id }: Props) => {
                   onChange={(e) =>
                     handleTechnologiesChange(index, e.target.value)
                   }
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors bg-white"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors bg-white text-sm sm:text-base"
                   placeholder="React, Node.js, MongoDB (separate with commas)"
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Start Date
@@ -200,7 +200,7 @@ const ProjectsForm = ({ next, previous, id }: Props) => {
                     onChange={(e) =>
                       handleInputChange(index, "startDate", e.target.value)
                     }
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors bg-white"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors bg-white text-sm sm:text-base"
                   />
                 </div>
 
@@ -214,12 +214,12 @@ const ProjectsForm = ({ next, previous, id }: Props) => {
                     onChange={(e) =>
                       handleInputChange(index, "endDate", e.target.value)
                     }
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors bg-white"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors bg-white text-sm sm:text-base"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     GitHub Link
@@ -230,7 +230,7 @@ const ProjectsForm = ({ next, previous, id }: Props) => {
                     onChange={(e) =>
                       handleInputChange(index, "github", e.target.value)
                     }
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors bg-white"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors bg-white text-sm sm:text-base"
                     placeholder="https://github.com/username/project"
                   />
                 </div>
@@ -245,7 +245,7 @@ const ProjectsForm = ({ next, previous, id }: Props) => {
                     onChange={(e) =>
                       handleInputChange(index, "live", e.target.value)
                     }
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors bg-white"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors bg-white text-sm sm:text-base"
                     placeholder="https://yourproject.live"
                   />
                 </div>
@@ -256,54 +256,59 @@ const ProjectsForm = ({ next, previous, id }: Props) => {
 
         <button
           onClick={addProjectEntry}
-          className="flex items-center gap-2 px-6 py-3 text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 rounded-lg transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105 cursor-pointer"
+          className="flex items-center justify-center gap-2 px-4 sm:px-6 py-2 sm:py-3 text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 rounded-lg transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105 cursor-pointer text-sm sm:text-base w-full sm:w-auto"
         >
-          <Plus size={18} />
-          Add Project
+          <Plus size={16} className="sm:w-[18px] sm:h-[18px]" />
+          <span className="hidden sm:inline">Add Project</span>
+          <span className="sm:hidden">Add</span>
         </button>
         <ErrorDisplay errors={errors} showErrors={showErrors} />
       </div>
 
-      <div className="flex items-center justify-between pt-6 border-t border-gray-200 mt-6">
+      <div className="flex flex-col sm:flex-row items-center justify-between pt-4 sm:pt-6 border-t border-gray-200 mt-4 sm:mt-6 gap-4 sm:gap-0">
         <button
           onClick={handleBack}
-          className="flex items-center gap-2 px-6 py-3 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors font-medium cursor-pointer"
+          className="flex items-center justify-center sm:justify-start gap-2 px-4 sm:px-6 py-2 sm:py-3 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors font-medium cursor-pointer text-sm sm:text-base w-full sm:w-auto order-2 sm:order-1"
         >
-          <ChevronLeft size={18} />
+          <ChevronLeft size={16} className="sm:w-[18px] sm:h-[18px]" />
           Back
         </button>
 
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto order-1 sm:order-2">
           <button
             onClick={handleSaveAndExit}
-            className="flex items-center gap-2 px-6 py-3 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors font-medium border border-blue-200 cursor-pointer"
+            className="flex items-center justify-center gap-2 px-4 sm:px-6 py-2 sm:py-3 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors font-medium border border-blue-200 cursor-pointer text-sm sm:text-base"
           >
             {loadingSave ? (
               <>
-                <ClipLoader size={22} />
-                saving..
+                <ClipLoader size={20} className="sm:w-[22px] sm:h-[22px]" />
+                <span className="hidden sm:inline">saving..</span>
+                <span className="sm:hidden">Saving...</span>
               </>
             ) : (
               <>
-                <Save size={18} />
-                Save & Exit
+                <Save size={16} className="sm:w-[18px] sm:h-[18px]" />
+                <span className="hidden sm:inline">Save & Exit</span>
+                <span className="sm:hidden">Save</span>
               </>
             )}
           </button>
 
           <button
             onClick={handleNext}
-            className="flex items-center gap-2 px-6 py-3 text-white bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors font-medium cursor-pointer"
+            className="flex items-center justify-center gap-2 px-4 sm:px-6 py-2 sm:py-3 text-white bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors font-medium cursor-pointer text-sm sm:text-base"
           >
             {loadingNext ? (
               <>
-                <ClipLoader size={22} color="white" />
-                saving..
+                <ClipLoader size={20} className="sm:w-[22px] sm:h-[22px]" color="white" />
+                <span className="hidden sm:inline">saving..</span>
+                <span className="sm:hidden">Saving...</span>
               </>
             ) : (
               <>
-                Next
-                <ChevronRight size={18} />
+                <span className="hidden sm:inline">Next</span>
+                <span className="sm:hidden">Continue</span>
+                <ChevronRight size={16} className="sm:w-[18px] sm:h-[18px]" />
               </>
             )}
           </button>

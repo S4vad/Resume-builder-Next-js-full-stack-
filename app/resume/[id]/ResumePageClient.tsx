@@ -62,10 +62,10 @@ export default function ResumePageClient({ id }: { id: string }) {
     await downloadResumePdf(previewRef.current, resume.title, setIsDownloading);
   }, [resume.title]);
   return (
-    <>
+    <div>
       <Link
         href="/dashboard"
-        className="group text-gray-700 font-medium text-xs absolute left-8 top-30 flex items-center gap-1 transition hover:-translate-x-1"
+        className="group hidden md:flex text-gray-700 font-medium text-xs absolute left-8 top-30 items-center gap-1 transition hover:-translate-x-1"
         onClick={() => dispatch(loadResume(initialState))}
       >
         <CircleArrowLeft className="text-gray-600 size-3 transition group-hover:text-blue-700" />
@@ -74,14 +74,14 @@ export default function ResumePageClient({ id }: { id: string }) {
         </span>
       </Link>
 
-      <div className="max-w-7xl mx-auto mt-3 flex flex-col justify-center gap-2">
+      <div className="max-w-7xl mx-auto mt-3 flex flex-col justify-center gap-2 sm:px-6 lg:px-8  px-4">
         <div>
           <ResumeHeader
             id={id}
             setshowTemplates={() => setShowTemplates(true)}
           />
         </div>
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <ResumeEdit id={id} />
           <div className="shadow-xl rounded-lg   ">
             <ResumePreview />
@@ -96,8 +96,8 @@ export default function ResumePageClient({ id }: { id: string }) {
           onClose={() => setShowTemplates(false)}
           className=" w-[90%] md:max-w-[60%] max-h-[95%] overflow-y-scroll h-screen relative "
         >
-          <div className="flex gap-3 h-[90%]">
-            <div className="">
+          <div className="flex gap-3 h-[90%] ">
+            <div className="w-full md:w-auto">
               <div className="grid grid-cols-2 gap-2 w-full ">
                 {templates.map((template, index) => (
                   <div
@@ -125,18 +125,20 @@ export default function ResumePageClient({ id }: { id: string }) {
               </div>
             </div>
 
-            <Image
-              src={selectedImage}
-              alt="preview image"
-              width={500}
-              height={600}
-              className="rounded-md "
-            />
+            <div className="hidden md:block">
+              <Image
+                src={selectedImage}
+                alt="preview image"
+                width={500}
+                height={600}
+                className="rounded-md "
+              />
+            </div>
           </div>
-          <div className=" absolute top-5 right-15">
+          <div className="absolute md:top-5 right-5 md:right-15 ">
             <button
               onClick={handleSubmit}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+              className="md:px-6 sm:px-4 px-3 py-2 bg-blue-600 text-white  rounded-md sm:rounded-lg shadow hover:bg-blue-500 transition-colors font-medium"
             >
               Use This Template
             </button>
@@ -175,6 +177,6 @@ export default function ResumePageClient({ id }: { id: string }) {
           </div>
         </Modal>
       )}
-    </>
+    </div>
   );
 }

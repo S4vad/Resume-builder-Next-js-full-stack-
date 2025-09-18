@@ -130,70 +130,71 @@ const AdditionalInfoForm = ({ next, previous, id }: Props) => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-sm">
-      <div className="mb-8">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+    <div className="w-full max-w-2xl mx-auto bg-white p-4 sm:p-6 lg:p-8 rounded-lg shadow-sm">
+      <div className="mb-6 sm:mb-8">
+        <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4 sm:mb-6">
           Additional Information
         </h2>
 
-        <div className="space-y-8">
+        <div className="space-y-6 sm:space-y-8">
           <div>
-            <h3 className="text-lg font-medium text-gray-800 mb-4 flex items-center gap-2">
+            <h3 className="text-base sm:text-lg font-medium text-gray-800 mb-4 flex items-center gap-2">
               <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
               Languages
             </h3>
 
             {/* Display existing languages */}
-            <div className="flex flex-wrap gap-3 mb-6">
+            <div className="flex flex-wrap gap-2 sm:gap-3 mb-4 sm:mb-6">
               {languages.map((language) => (
                 <div
                   key={language}
-                  className="bg-purple-200 px-4 py-2 rounded-lg flex items-center gap-2"
+                  className="bg-purple-200 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg flex items-center gap-1 sm:gap-2 text-sm sm:text-base"
                 >
                   <span>{language}</span>
                   <button
                     onClick={() => handleRemoveLanguage(language)}
                     className="text-gray-600 hover:text-red-500 transition-colors"
                   >
-                    <X size={18} />
+                    <X size={16} className="sm:w-[18px] sm:h-[18px]" />
                   </button>
                 </div>
               ))}
             </div>
 
             {/* Add new language */}
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
               <input
                 type="text"
                 value={inputLanguage}
                 onChange={(e) => setInputLanguage(e.target.value)}
                 placeholder="Enter new language (e.g. English, Spanish)"
-                className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors bg-white"
+                className="flex-1 px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors bg-white text-sm sm:text-base"
               />
               <button
                 onClick={handleAddLanguage}
-                className="flex items-center gap-2 px-6 py-3 text-white bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 rounded-lg transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105 cursor-pointer"
+                className="flex items-center justify-center gap-2 px-4 sm:px-6 py-2 sm:py-3 text-white bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 rounded-lg transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105 cursor-pointer text-sm sm:text-base"
               >
-                <Plus size={18} />
-                Add Language
+                <Plus size={16} className="sm:w-[18px] sm:h-[18px]" />
+                <span className="hidden sm:inline">Add Language</span>
+                <span className="sm:hidden">Add</span>
               </button>
             </div>
           </div>
 
           {/* Interests Section */}
           <div>
-            <h3 className="text-lg font-medium text-gray-800 mb-4 flex items-center gap-2">
+            <h3 className="text-base sm:text-lg font-medium text-gray-800 mb-4 flex items-center gap-2">
               <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
               Interests
             </h3>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3">
               {predefinedInterests.map((interest) => (
                 <button
                   key={interest}
                   type="button"
                   onClick={() => toggleInterest(interest)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 border-2 cursor-pointer${
+                  className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 border-2 cursor-pointer${
                     interests.includes(interest)
                       ? "bg-gradient-to-r from-orange-600 to-red-600 text-white border-transparent shadow-lg transform scale-105"
                       : "bg-white text-gray-700 border-gray-300 hover:border-orange-300 hover:bg-orange-50"
@@ -206,7 +207,7 @@ const AdditionalInfoForm = ({ next, previous, id }: Props) => {
 
             {/* Selected interests counter */}
             {interests.length > 0 && (
-              <div className="mt-4 text-sm text-gray-600">
+              <div className="mt-3 sm:mt-4 text-xs sm:text-sm text-gray-600">
                 Selected: {interests.length} interest
                 {interests.length !== 1 ? "s" : ""}
               </div>
@@ -217,30 +218,32 @@ const AdditionalInfoForm = ({ next, previous, id }: Props) => {
       </div>
 
       {/* Action Buttons */}
-      <div className="flex items-center justify-between pt-6 border-t border-gray-200">
+      <div className="flex flex-col sm:flex-row items-center justify-between pt-4 sm:pt-6 border-t border-gray-200 gap-4 sm:gap-0">
         <button
           onClick={handleBack}
-          className="flex items-center gap-2 px-6 py-3 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors font-medium cursor-pointer"
+          className="flex items-center justify-center sm:justify-start gap-2 px-4 sm:px-6 py-2 sm:py-3 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors font-medium cursor-pointer text-sm sm:text-base w-full sm:w-auto order-2 sm:order-1"
         >
-          <ChevronLeft size={18} />
+          <ChevronLeft size={16} className="sm:w-[18px] sm:h-[18px]" />
           Back
         </button>
 
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto order-1 sm:order-2">
           <button
             onClick={handleSaveAndExit}
-            className="flex items-center gap-2 px-6 py-3 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors font-medium border border-blue-200 cursor-pointer"
+            className="flex items-center justify-center gap-2 px-4 sm:px-6 py-2 sm:py-3 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors font-medium border border-blue-200 cursor-pointer text-sm sm:text-base"
           >
-            <Save size={18} />
-            Save & Exit
+            <Save size={16} className="sm:w-[18px] sm:h-[18px]" />
+            <span className="hidden sm:inline">Save & Exit</span>
+            <span className="sm:hidden">Save</span>
           </button>
 
           <button
             onClick={() => dispatch(setIsPreview(true))}
-            className="flex items-center gap-2 px-6 py-3 text-white bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors font-medium cursor-pointer"
+            className="flex items-center justify-center gap-2 px-4 sm:px-6 py-2 sm:py-3 text-white bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors font-medium cursor-pointer text-sm sm:text-base"
           >
-            Preview & Download
-            <ChevronRight size={18} />
+            <span className="hidden sm:inline">Preview & Download</span>
+            <span className="sm:hidden">Preview</span>
+            <ChevronRight size={16} className="sm:w-[18px] sm:h-[18px]" />
           </button>
         </div>
       </div>

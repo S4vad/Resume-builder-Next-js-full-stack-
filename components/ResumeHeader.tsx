@@ -65,15 +65,15 @@ const ResumeHeader = ({
     <>
       <div className="relative">
         <FancyProgressBar value={completion.percentage} />
-        <span className="text-violet-500 absolute right-2  text-xs font-semibold -top-0.5">
+        <span className="text-gray-600 absolute right-2  text-xs font-semibold -top-0.5">
           {completion.percentage}%
         </span>
       </div>
 
-      <div className="w-full h-[80px] bg-gradient-to-r from-fuchsia-50 to-violet-50 rounded-xl p-3 px-10 flex items-center justify-between">
+      <div className="w-full min-h-[80px] bg-gradient-to-r from-fuchsia-50 to-violet-50 rounded-xl p-3 px-4 sm:px-6 md:px-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0">
         <form
           suppressHydrationWarning
-          className="flex  items-center text-2xl"
+          className="flex items-center text-lg sm:text-xl md:text-2xl w-full sm:w-auto"
           onSubmit={async (e: React.FormEvent<HTMLFormElement>) => {
             e.preventDefault();
             await updateResumeTitle(id, input);
@@ -86,43 +86,45 @@ const ResumeHeader = ({
               value={input}
               name="input"
               onChange={(e) => setInput(e.target.value)}
-              className="   border-b-2 border-violet-600 outline-none p-1"
+              className="border-b-2 border-violet-600 outline-none p-1 flex-1 sm:flex-none min-w-0"
             />
           ) : (
-            <span className="">{input}</span>
+            <span className="truncate flex-1 sm:flex-none min-w-0">
+              {input}
+            </span>
           )}
           <button
             suppressHydrationWarning
             type="submit"
             className={`${
               edit ? "bg-violet-600 text-white" : "bg-slate-100"
-            } p-1 rounded-lg ml-5`}
+            } p-1 rounded-lg ml-3 sm:ml-5 flex-shrink-0`}
           >
             {edit ? <IoMdCheckmark size={25} /> : <LiaEditSolid size={25} />}
           </button>
         </form>
 
-        <div className="flex items-center gap-4 ">
+        <div className="flex items-center gap-2 sm:gap-4 w-full sm:w-auto flex-wrap sm:flex-nowrap">
           <div
-            className="flex items-center gap-2 p-2 bg-violet-200 rounded-xl text-violet-600 cursor-pointer hover:bg-violet-300 hover:text-violet-900 transition duration-300"
+            className="flex items-center gap-1 sm:gap-2 p-2 bg-violet-200 rounded-xl text-violet-600 cursor-pointer hover:bg-violet-300 hover:text-violet-900 transition duration-300 text-sm sm:text-base flex-1 sm:flex-none justify-center sm:justify-start"
             onClick={() => setshowTemplates()}
           >
             <VscPreview />
-            <span>Templates</span>
+            <span className="hidden sm:block">Templates</span>
           </div>
           <div
-            className="flex items-center gap-2 p-2 bg-red-100 text-red-600 rounded-xl cursor-pointer hover:bg-red-300 hover:text-red-900 transition duration-300"
+            className="flex items-center gap-1 sm:gap-2 p-2 bg-red-100 text-red-600 rounded-xl cursor-pointer hover:bg-red-300 hover:text-red-900 transition duration-300 text-sm sm:text-base flex-1 sm:flex-none justify-center sm:justify-start"
             onClick={() => handleDeleteResume()}
           >
             <RiDeleteBin6Line />
-            <span>Delete</span>
+            <span className="hidden sm:block">Delete</span>
           </div>
           <div
-            className="flex items-center gap-2 p-2 bg-emerald-100 rounded-xl text-emerald-600 cursor-pointer hover:bg-emerald-300 hover:text-emerald-900 transition duration-300"
+            className="flex items-center gap-1 sm:gap-2 p-2 bg-emerald-100 rounded-xl text-emerald-600 cursor-pointer hover:bg-emerald-300 hover:text-emerald-900 transition duration-300 text-sm sm:text-base flex-1 sm:flex-none justify-center sm:justify-start"
             onClick={() => dispatch(setIsPreview(true))}
           >
             <FaRegEye />
-            <span>Preview</span>
+            <span className="hidden sm:block">Preview</span>
           </div>
         </div>
       </div>

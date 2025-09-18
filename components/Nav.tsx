@@ -27,35 +27,36 @@ const Navbar = () => {
         className="flex items-center space-x-3 cursor-pointer"
         onClick={handleLogoClick}
       >
-        <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-          <FileText className="w-6 h-6 text-white" />
+        <div className="md:size-10 size-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+          <FileText className="size-6 text-white" />
         </div>
-        <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+        <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
           ElevateCV
         </span>
       </div>
-      {status === "authenticated" ? (
+      {status === "authenticated" && (
         <div className="flex flex-col items-end">
           {session?.user?.name && (
-            <div className=" text-violet-600">{session.user.name}</div>
+            <div className=" text-violet-600 text-sm sm:text-md ">{session.user.name}</div>
           )}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2  ">
             <Image
               src={session.user?.image || defaultImage}
               alt="user image"
               width={40}
               height={40}
-              className="rounded-full"
+              className="rounded-full size-8 sm:size-10 "
             />
             <button
-              className="bg-slate-100 shadow-sm py-1 px-2 text-orange-600 rounded hover:cursor-pointer hover:bg-red-300 hover:text-white"
+              className="bg-slate-100 shadow-sm py-1 px-2 text-sm md:text-md  text-orange-600 rounded hover:cursor-pointer hover:bg-red-300 hover:text-white"
               onClick={async () => await signOut()}
             >
               Logout
             </button>
           </div>
         </div>
-      ) : (
+      )}
+      {status === "unauthenticated" && (
         <div className="flex items-center space-x-4">
           <button
             className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-full hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 cursor-pointer"
@@ -63,6 +64,11 @@ const Navbar = () => {
           >
             Get Started
           </button>
+        </div>
+      )}
+      {status === "loading" && (
+        <div>
+          <ClipLoader size={28} color="blue" />
         </div>
       )}
     </div>

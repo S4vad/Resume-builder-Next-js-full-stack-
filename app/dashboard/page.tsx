@@ -18,7 +18,7 @@ const Dashboard = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [title, setTitle] = useState<string>("");
   const [creating, setCreating] = useState(false);
-    const [initialFetchDone, setInitialFetchDone] = useState(false);
+  const [initialFetchDone, setInitialFetchDone] = useState(false);
 
   const [cardLoading, setCardLoading] = useState<string | null>(null);
 
@@ -30,11 +30,10 @@ const Dashboard = () => {
   );
 
   const fetchUserResumes = useCallback(async () => {
-     if (!currentUser?.id) {
+    if (!currentUser?.id) {
       setInitialFetchDone(true);
       return;
     }
-
 
     try {
       dispatch(setLoading(true));
@@ -74,10 +73,11 @@ const Dashboard = () => {
     const response = await deleteResume(id, currentUser.id);
 
     if (response.success) {
-      toast.success(response.message || "Resume deleted successfully");
-
-      dispatch(setResumes(response.data!));
+      const response = await getUserResume(currentUser.id);
+      const mappedResumes = response.data!.map(mapPrismaResumeToState);
+      dispatch(setResumes(mappedResumes));
     }
+    toast.success(response.message || "Resume deleted successfully");
   };
 
   const handleResumeCreated = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -135,9 +135,9 @@ const Dashboard = () => {
     <div className="">
       <div className="flex justify-between p-8 pt-10">
         <div className="text-gray-800 ">
-          <h1 className="font-semibold text-xl">My Resumes</h1>
+          <h1 className="md:font-semibold text-md md:text-xl">My Resumes</h1>
           {resumes.length > 0 && currentUser ? (
-            <p>Created {resumes.length} resumes</p>
+            <p className="text-sm md:text-lg">Created {resumes.length} resumes</p>
           ) : (
             <p>Create your First Resume</p>
           )}
@@ -149,7 +149,7 @@ const Dashboard = () => {
           Create New <RiFileUploadLine />
         </Button>
       </div>
-      {resumes?.length > 0  ? (
+      {resumes?.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-8">
           {Mappedresumes.map((resume) => {
             const completionData = calculateResumeCompletion(resume);
@@ -171,6 +171,8 @@ const Dashboard = () => {
                   sectionDetails={completionData.sectionDetails}
                   onDelete={() => handleDeleteResume(resume.id)}
                   isLoading={cardLoading === resume.id}
+                  setCardLoading={setCardLoading}
+                  resumeId={resume.id}
                 />
               </div>
             );
@@ -203,15 +205,15 @@ const Dashboard = () => {
       >
         <form
           onSubmit={handleResumeCreated}
-          className="space-y-8 bg-white p-8 rounded-xl "
+          className=" space-y-5 md:space-y-8 bg-white p-4 sm:p-6 md:p-8  rounded-lg md:rounded-xl "
         >
-          <p className=" text-gray-500">
+          <p className=" text-gray-500 text-sm md:text-lg" >
             Give your resume a title to get started. You can customize
             everything later.
           </p>
 
           <div>
-            <label className="font-medium text-gray-700">Resume Title</label>
+            <label className=" text-sm sm:text-md font-medium text-gray-700">Resume Title</label>
             <input
               type="text"
               name="title"
@@ -230,7 +232,7 @@ const Dashboard = () => {
             disabled={creating || !title.trim()}
           >
             {creating ? (
-              <div className="flex items-center justify-center gap-2">
+              <div className="flex items-center justify-center gap-2 text-sm sm:text-md">
                 <ClipLoader color="#ffffff" size="16px" />
                 Creating...
               </div>

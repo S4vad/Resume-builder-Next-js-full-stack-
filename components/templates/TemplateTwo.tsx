@@ -5,7 +5,7 @@ import { formatYearMonth } from "../../lib/helper";
 import { useAppSelector } from "@/store/hooks";
 
 const sectionTitleClass =
-  "text-base font-bold uppercase tracking-wide mb-1 pb-1 border-b border-gray-300";
+  "text-sm sm:text-base font-bold uppercase tracking-wide mb-1 pb-1 border-b border-gray-300";
 
 const TemplateTwo: React.FC = () => {
   const resumeFromStore = useAppSelector((state) => state.resume);
@@ -69,21 +69,21 @@ const TemplateTwo: React.FC = () => {
   const interests = resumeData.intrests || [];
 
   return (
-    <div className="resume-section p-4 bg-white font-sans text-black max-w-[210mm] mx-auto">
+    <div className="resume-section p-3 sm:p-4 bg-white font-sans text-black max-w-[210mm] mx-auto">
       {/* Header Section */}
       <div className="text-center mb-2">
-        <h1 className="text-2xl font-bold tracking-tight mb-2">
+        <h1 className="text-xl sm:text-2xl font-bold tracking-tight mb-2">
           {profileInfo.fullName || "Your Name"}
         </h1>
-        <p className="text-sm text-gray-600 font-medium mb-2">
+        <p className="text-xs sm:text-sm text-gray-600 font-medium mb-2">
           {profileInfo.designation || "Your Designation"}
         </p>
-        <div className="flex flex-wrap justify-center gap-1 text-[11px] text-gray-700">
-          {contactInfo.phone && <span>{contactInfo.phone}</span>}
+        <div className="flex flex-wrap justify-center gap-1 text-[10px] sm:text-[11px] text-gray-700">
+          {contactInfo.phone && <span className="break-all">{contactInfo.phone}</span>}
           {contactInfo.email && (
             <a
               href={`mailto:${contactInfo.email}`}
-              className="hover:underline text-blue-600"
+              className="hover:underline text-blue-600 break-all"
             >
               {contactInfo.email}
             </a>
@@ -91,7 +91,7 @@ const TemplateTwo: React.FC = () => {
           {contactInfo.linkedin && (
             <a
               href={contactInfo.linkedin}
-              className="hover:underline text-blue-600"
+              className="hover:underline text-blue-600 break-all"
             >
               LinkedIn
             </a>
@@ -99,7 +99,7 @@ const TemplateTwo: React.FC = () => {
           {contactInfo.github && (
             <a
               href={contactInfo.github}
-              className="hover:underline text-blue-600"
+              className="hover:underline text-blue-600 break-all"
             >
               GitHub
             </a>
@@ -107,7 +107,7 @@ const TemplateTwo: React.FC = () => {
           {contactInfo.website && (
             <a
               href={contactInfo.website}
-              className="hover:underline text-blue-600"
+              className="hover:underline text-blue-600 break-all"
             >
               Portfolio
             </a>
@@ -121,7 +121,7 @@ const TemplateTwo: React.FC = () => {
       {profileInfo.summary && (
         <section className="mb-2">
           <h2 className={sectionTitleClass}>Summary</h2>
-          <p className="text-[11px] text-gray-800 leading-tight">
+          <p className="text-[10px] sm:text-[11px] text-gray-800 leading-tight">
             {profileInfo.summary}
           </p>
         </section>
@@ -136,14 +136,14 @@ const TemplateTwo: React.FC = () => {
               <div key={idx} className="space-y-0.5">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h3 className="font-semibold text-[12px] pb-2 text-gray-800">
+                    <h3 className="font-semibold text-[11px] sm:text-[12px] pb-1 sm:pb-2 text-gray-800 break-all">
                       {exp.role}
                     </h3>
-                    <p className="italic text-[11px] pb-2 text-gray-600">
+                    <p className="italic text-[10px] sm:text-[11px] pb-1 sm:pb-2 text-gray-600 break-all">
                       {exp.company}
                     </p>
                   </div>
-                  <div className="text-[11px] text-right text-gray-600">
+                  <div className="text-[10px] sm:text-[11px] text-right text-gray-600">
                     {exp.startDate && exp.endDate && (
                       <p className="italic">
                         {formatYearMonth(exp.startDate)} -{" "}
@@ -151,14 +151,14 @@ const TemplateTwo: React.FC = () => {
                       </p>
                     )}
                     {exp.location && (
-                      <p className="text-[11px]">{exp.location}</p>
+                      <p className="text-[10px] sm:text-[11px] break-all">{exp.location}</p>
                     )}
                   </div>
                 </div>
 
-                <ul className=" mt-0.5 text-[12px] text-gray-700">
+                <ul className="mt-0.5 text-[11px] sm:text-[12px] text-gray-700">
                   {exp.description?.split("\n").map((line, i) => (
-                    <li key={i} className="pb-1">
+                    <li key={i} className="pb-1 break-words">
                       {line}
                     </li>
                   ))}
@@ -177,31 +177,31 @@ const TemplateTwo: React.FC = () => {
             {projects.map((proj, idx) => (
               <div key={idx} className="space-y-0.5">
                 <div className="flex justify-between items-start">
-                  <h3 className="font-semibold text-[12px] text-gray-800">
+                  <h3 className="font-semibold text-[11px] sm:text-[12px] text-gray-800 break-all">
                     {proj.title}
                   </h3>
                   {proj.link && (
                     <a
                       href={proj.link}
-                      className="text-blue-600 text-[11px] hover:underline"
+                      className="text-blue-600 text-[10px] sm:text-[11px] hover:underline break-all"
                     >
                       {proj.linkType || "Link"}
                     </a>
                   )}
                 </div>
                 {proj.technologies && (
-                  <p className="bg-gray-100 pb-2 text-[10px] font-mono px-1.5 py-0.5 rounded inline-block">
+                  <p className="bg-gray-100 pb-2 text-[9px] sm:text-[10px] font-mono px-1.5 py-0.5 rounded inline-block break-all">
                     {proj.technologies}
                   </p>
                 )}
-                <p className="text-[11px] pb-2 text-gray-700 ">
+                <p className="text-[10px] sm:text-[11px] pb-2 text-gray-700 break-words">
                   {proj.description}
                 </p>
-                <div className="flex gap-1 mt-0.5 pt-2 text-[11px]">
+                <div className="flex gap-1 mt-0.5 pt-2 text-[10px] sm:text-[11px]">
                   {proj.github && (
                     <a
                       href={proj.github}
-                      className="flex items-center gap-0.5 hover:underline text-blue-600"
+                      className="flex items-center gap-0.5 hover:underline text-blue-600 break-all"
                     >
                       <LuGithub size={10} /> GitHub
                     </a>
@@ -209,7 +209,7 @@ const TemplateTwo: React.FC = () => {
                   {proj.liveDemo && (
                     <a
                       href={proj.liveDemo}
-                      className="flex items-center gap-0.5 hover:underline text-blue-600"
+                      className="flex items-center gap-0.5 hover:underline text-blue-600 break-all"
                     >
                       <LuExternalLink size={10} /> Demo
                     </a>
@@ -229,17 +229,17 @@ const TemplateTwo: React.FC = () => {
             {education.map((edu, idx) => (
               <div key={idx} className="space-y-0.25">
                 <div className="flex justify-between items-center">
-                  <h3 className="font-semibold text-[12px] pb-2 text-gray-800">
+                  <h3 className="font-semibold text-[11px] sm:text-[12px] pb-1 sm:pb-2 text-gray-800 break-all">
                     {edu.degree}
                   </h3>
                   {edu.startDate && edu.endDate && (
-                    <p className="italic text-[11px] pb-2 text-gray-600">
+                    <p className="italic text-[10px] sm:text-[11px] pb-1 sm:pb-2 text-gray-600">
                       {formatYearMonth(edu.startDate)} -{" "}
                       {formatYearMonth(edu.endDate)}
                     </p>
                   )}
                 </div>
-                <p className="italic text-[11px] text-gray-700">
+                <p className="italic text-[10px] sm:text-[11px] text-gray-700 break-all">
                   {edu.institution}
                 </p>
               </div>
@@ -252,9 +252,9 @@ const TemplateTwo: React.FC = () => {
       {skills.length > 0 && (
         <section className="mb-2">
           <h2 className={sectionTitleClass}>Skills</h2>
-          <ul className="text-[11px] text-gray-800 flex flex-wrap gap-1">
+          <ul className="text-[10px] sm:text-[11px] text-gray-800 flex flex-wrap gap-1">
             {skills.map((skill, idx) => (
-              <li key={idx} className="w-fit">
+              <li key={idx} className="w-fit break-all">
                 {skill.name}
               </li>
             ))}
@@ -266,9 +266,9 @@ const TemplateTwo: React.FC = () => {
       {certifications.length > 0 && (
         <section className="mb-2">
           <h2 className={sectionTitleClass}>Certifications</h2>
-          <ul className="list-disc list-inside text-[11px] text-gray-700">
+          <ul className="list-disc list-inside text-[10px] sm:text-[11px] text-gray-700">
             {certifications.map((cert, idx) => (
-              <li key={idx} className="leading-tight">
+              <li key={idx} className="leading-tight break-all">
                 {cert.title} — {formatYearMonth(cert.year)}
               </li>
             ))}
@@ -283,11 +283,11 @@ const TemplateTwo: React.FC = () => {
             {languages.length > 0 && (
               <div>
                 <h2 className={sectionTitleClass}>Languages</h2>
-                <ul className="flex flex-wrap gap-1 text-[11px] text-gray-700">
+                <ul className="flex flex-wrap gap-1 text-[10px] sm:text-[11px] text-gray-700">
                   {languages.map((lang, idx) => (
                     <li
                       key={idx}
-                      className="bg-gray-100 px-1.5 py-0.5 rounded-full"
+                      className="bg-gray-100 px-1.5 py-0.5 rounded-full break-all"
                     >
                       {lang.name}
                     </li>
@@ -298,11 +298,11 @@ const TemplateTwo: React.FC = () => {
             {interests.length > 0 && interests.some(Boolean) && (
               <div>
                 <h2 className={sectionTitleClass}>Interests</h2>
-                <ul className="flex flex-wrap gap-1 text-[11px] text-gray-700">
+                <ul className="flex flex-wrap gap-1 text-[10px] sm:text-[11px] text-gray-700">
                   {interests.filter(Boolean).map((int, idx) => (
                     <li
                       key={idx}
-                      className="bg-gray-100 px-1.5 py-0.5 rounded-full"
+                      className="bg-gray-100 px-1.5 py-0.5 rounded-full break-all"
                     >
                       {int}
                     </li>

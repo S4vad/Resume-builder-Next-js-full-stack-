@@ -21,15 +21,15 @@ const Modal: React.FC<ModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div className="fixed  inset-0 bg-black/50 flex items-center justify-center z-50">
       <div
         className={cn(
-          "bg-gray-100 rounded-2xl p-8 w-[90%] max-w-md shadow-lg relative  ",
+          "bg-gray-100 rounded-xl md:rounded-2xl p-6 md:p-8 w-[90%] max-w-md shadow-lg relative  ",
           className
         )}
         {...props}
       >
-        <h1 className="text-xl font-semibold text-gray-800">{header}</h1>
+        <h1 className="md:text-xl text-lg font-semibold text-gray-800">{header}</h1>
         <button
           onClick={onClose}
           className="absolute top-5 right-5 text-gray-600  cursor-pointer hover:text-pink-400"

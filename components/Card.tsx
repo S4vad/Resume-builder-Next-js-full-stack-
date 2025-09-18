@@ -16,12 +16,15 @@ import {
   Heart,
 } from "lucide-react";
 import { ScaleLoader } from "react-spinners";
+import { useRouter } from "next/navigation";
 
 interface Props {
   title: string;
   createdAt: string;
   isLoading: boolean;
   updatedAt: string;
+  setCardLoading: React.Dispatch<React.SetStateAction<string | null>>;
+  resumeId: string;
   onDelete: () => void;
   completion: number;
   sectionDetails?: {
@@ -41,8 +44,11 @@ export const ResumeSummaryCard = ({
   isLoading,
   completion,
   sectionDetails,
+  setCardLoading,
+  resumeId,
 }: Props) => {
   const [isHovered, setIsHovered] = useState(false);
+  const router = useRouter();
 
   const formattedCreatedDate = createdAt
     ? new Date(createdAt).toLocaleDateString("en-US", {
@@ -165,6 +171,8 @@ export const ResumeSummaryCard = ({
   const handleEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     e.preventDefault();
+    setCardLoading(resumeId);
+    router.push(`/resume/${resumeId}`);
   };
 
   const completedSections = sections.filter(
