@@ -4,22 +4,23 @@ import { getToken } from "next-auth/jwt";
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
+  // Allow all API routes
   if (pathname.startsWith("/api")) {
     return NextResponse.next();
   }
 
-  // Allow auth pages
+  // Allow auth routes
   if (pathname.startsWith("/auth")) {
     return NextResponse.next();
   }
 
-  // Allow static files and Next.js internals
-  if (
-    pathname.startsWith("/_next") ||
-    pathname.startsWith("/static") ||
-    pathname.includes(".") ||
-    pathname === "/favicon.ico"
-  ) {
+  // Allow static files
+  if (pathname.match(/\.(png|jpg|jpeg|svg|ico|css|js|woff|woff2|ttf|eot)$/)) {
+    return NextResponse.next();
+  }
+
+  // Allow _next routes (for Next.js internal routing)
+  if (pathname.startsWith("/_next")) {
     return NextResponse.next();
   }
 
@@ -27,10 +28,8 @@ export async function middleware(req: NextRequest) {
     const token = await getToken({ 
       req, 
       secret: process.env.NEXTAUTH_SECRET,
-      cookieName: "next-auth.session-token"
+      secureCookie: process.env.NODE_ENV === "production" 
     });
-
-    console.log("Middleware - Path:", pathname, "Token exists:", !!token);
 
     if (pathname === "/") {
       if (token) {
@@ -39,15 +38,22 @@ export async function middleware(req: NextRequest) {
       return NextResponse.next();
     }
 
-    if (!token) {
-      console.log("No token, redirecting to home");
-      return NextResponse.redirect(new URL("/", req.url));
+    // Protected routes - but only redirect if we're sure there's no token
+    // Add a flag to prevent middleware loops
+    const hasRetried = req.headers.get('x-middleware-retry');
+    
+    if (!token && !hasRetried) {
+      const response = NextResponse.redirect(new URL("/", req.url));
+      response.headers.set('x-middleware-retry', 'true');
+      return response;
     }
-
+    
+    // If we've already retried, let it through (client-side auth will handle it)
     return NextResponse.next();
 
   } catch (error) {
     console.error("Middleware error:", error);
+    // On error, let the request through and handle auth client-side
     return NextResponse.next();
   }
 }

@@ -5,6 +5,7 @@ import SessionSync from "@/components/SessionSync";
 import Navbar from "@/components/Nav";
 import { Toaster } from "react-hot-toast";
 import { Metadata } from "next";
+import AuthGuard from "@/components/AuthGuard";
 
 export const metadata: Metadata = {
   title: "ElevateCV",
@@ -25,8 +26,10 @@ export default function RootLayout({
           <ReduxProvider>
             <SessionSync />
             <Toaster position="top-center" reverseOrder={true} />
-            <Navbar />
-            {children}
+            <AuthGuard>
+              <Navbar />
+              {children}
+            </AuthGuard>
           </ReduxProvider>
         </AuthProvider>
       </body>

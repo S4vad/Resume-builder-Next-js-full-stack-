@@ -14,6 +14,8 @@ import toast from "react-hot-toast";
 import { calculateResumeCompletion } from "@/lib/completionCalculator";
 import { setError, setLoading } from "@/store/slices/resumeSlice";
 
+
+
 const Dashboard = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [title, setTitle] = useState<string>("");
