@@ -4,32 +4,57 @@ import { getToken } from "next-auth/jwt";
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // Allow auth routes without restriction
+  if (pathname.startsWith("/api")) {
+    return NextResponse.next();
+  }
+
+  // Allow auth pages
   if (pathname.startsWith("/auth")) {
     return NextResponse.next();
   }
 
-  if (pathname.match(/\.(png|jpg|jpeg|svg|ico|css|js|woff|woff2|ttf|eot)$/)) {
+  // Allow static files and Next.js internals
+  if (
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/static") ||
+    pathname.includes(".") ||
+    pathname === "/favicon.ico"
+  ) {
     return NextResponse.next();
   }
 
-  const token = await getToken({ req, secret: process.env.AUTH_SECRET });
+  try {
+    const token = await getToken({ 
+      req, 
+      secret: process.env.NEXTAUTH_SECRET,
+      cookieName: "next-auth.session-token"
+    });
 
-  if (pathname === "/") {
-    if (token) {
-      return NextResponse.redirect(new URL("/dashboard", req.url));
-    } else {
+    console.log("Middleware - Path:", pathname, "Token exists:", !!token);
+
+    if (pathname === "/") {
+      if (token) {
+        return NextResponse.redirect(new URL("/dashboard", req.url));
+      }
       return NextResponse.next();
     }
-  }
 
-  if (!token) {
-    return NextResponse.redirect(new URL("/", req.url));
-  }
+    if (!token) {
+      console.log("No token, redirecting to home");
+      return NextResponse.redirect(new URL("/", req.url));
+    }
 
-  return NextResponse.next();
+    return NextResponse.next();
+
+  } catch (error) {
+    console.error("Middleware error:", error);
+    return NextResponse.next();
+  }
 }
 
 export const config = {
-  matcher: ["/((?!api/auth|_next|static|favicon.ico).*)"],
+  matcher: [
+
+    "/((?!api|_next/static|_next/image|favicon.ico).*)",
+  ],
 };

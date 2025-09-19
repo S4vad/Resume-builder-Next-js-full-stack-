@@ -114,7 +114,10 @@ const Login = () => {
 
         <p className="text-center">
           Don&apos;t have an account?
-          <Link href="/auth/signup" className="underline text-red-400 ml-2 cursor-pointer">
+          <Link
+            href="/auth/signup"
+            className="underline text-red-400 ml-2 cursor-pointer"
+          >
             Sign up
           </Link>
         </p>
